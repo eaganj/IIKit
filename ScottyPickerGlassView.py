@@ -52,3 +52,5 @@ class ScottyPickerGlassView(NSView):
         NSBezierPath.strokeRect_(self._rect)
     
 PickerGlassView = ScottyPickerGlassView
+
+__all__ = 'PickerGlassView ScottyPickerGlassView'.split()

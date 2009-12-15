@@ -67,8 +67,8 @@ class Instrument(object):
         '''
         return None
         
-    def glassViewForWindow(self, window):
-        glassWindow = Scotty().glassWindowForWindow_(window)
-        return glassWindow.contentView()
+    # def glassViewForWindow(self, window):
+    #     glassWindow = Scotty().glassWindowForWindow_(window)
+    #     return glassWindow.contentView()
 
 __all__ = 'Instrument'.split()

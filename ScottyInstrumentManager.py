@@ -8,10 +8,10 @@ import os.path
 
 import jre.cocoa
 
-from InstrumentManager import *
-from ScottyController import *
+import InstrumentManager
+from ScottyController import Scotty
 
-class ScottyInstrumentManager(InstrumentManager):
+class ScottyInstrumentManager(InstrumentManager.InstrumentManager):
     def _loadInstrumentPlugins(self):
         from InstrumentLoader import InstrumentLoader
         searchDirs = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, 
@@ -31,13 +31,19 @@ class ScottyInstrumentManager(InstrumentManager):
                         # FIXME: Should probably alert user
                         pluginName = os.path.basename(pluginPath)
                         NSLog(u"Could not load plugin: %s: %s: %s" % (pluginName, e.__class__.__name__, e))
+    
+    def glassViewForWindow(self, window):
+        # FIXME: refactor into InstrumentManager instead of using Scotty
+        glassWindow = Scotty().glassWindowForWindow_(window)
+        return glassWindow.contentView()
         
     def grabGlassWindowsForInstrument_hijackingInteraction_(self, instrument, hijack):
         Scotty().grabGlassWindowsForInstrument_hijackingInteraction_(instrument, hijack)
 
     def ungrabGlassWindowsForInstrument_(self, instrument):
-        Scotty().ungrabGlassWindowsForInstrument_hijackingInteraction_(instrument, hijack)
+        Scotty().ungrabGlassWindowsForInstrument_(instrument)
 
+InstrumentManager.InstrumentManager = ScottyInstrumentManager # Override InstrumentManager with Scotty version
 InstrumentManager = ScottyInstrumentManager
 
-__all__ = 'ScottyInstrumentManager'.split()
+__all__ = 'ScottyInstrumentManager InstrumentManager'.split()

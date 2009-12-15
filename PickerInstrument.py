@@ -8,6 +8,7 @@ import jre.cocoa
 import jre.debug
 
 from Instrument import *
+from InstrumentManager import *
 #from PickerGlassView import *
 
 class ScottyPickerInstrument(Instrument):
@@ -69,7 +70,9 @@ class ScottyPickerInstrument(Instrument):
     def highlightObject(self, obj):
         # FIXME: Need to add object protocol support!
         if hasattr(obj, 'window') and hasattr(obj, 'frame'):
-            self.glassViewForWindow(obj.window()).addHighlightBoxForObject_(obj)
+            #self.glassViewForWindow(obj.window()).addHighlightBoxForObject_(obj)
+            glassView = InstrumentManager.sharedInstrumentManager().glassViewForWindow(obj.window())
+            glassView.addHighlightBoxForObject_(obj)
         else:
             print 'Cannot highlight object:', obj
         

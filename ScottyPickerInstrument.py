@@ -7,10 +7,10 @@ import objc
 import jre.cocoa
 import jre.debug
 
-from PickerInstrument import *
+import PickerInstrument
 from ScottyPickerGlassView import *
 
-class ScottyPickerInstrument(PickerInstrument):
+class ScottyPickerInstrument(PickerInstrument.PickerInstrument):
     def __init__(self, instrumentID):
         super(ScottyPickerInstrument, self).__init__(instrumentID)
         self.highlightFillColor = NSColor.colorWithCalibratedRed_green_blue_alpha_(1.0, 0.0, 0.0, 0.125)
@@ -19,4 +19,7 @@ class ScottyPickerInstrument(PickerInstrument):
     def newGlassViewForWindow(self, window):
         return ScottyPickerGlassView(window.frame(), self)
 
-__all__ = 'ScottyPickerInstrument'.split()
+PickerInstrument.PickerInstrument = ScottyPickerInstrument
+PickerInstrument = ScottyPickerInstrument
+
+__all__ = 'ScottyPickerInstrument PickerInstrument'.split()

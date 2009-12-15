@@ -2,15 +2,18 @@ from __future__ import with_statement
 
 import os.path
 
+import jre.debug
+
 _sharedInstrumentManager = None
 
-class InstrumentManager(object): #FIXME: make iStar.Object subclass
+class IStarInstrumentManager(object): #FIXME: make iStar.Object subclass
     def __init__(self):
-        super(InstrumentManager, self).__init__()
+        super(IStarInstrumentManager, self).__init__()
         
         self._instruments = {}
         self._activeInstrument = None
-        
+    
+    def init(self):
         self._loadInstrumentPlugins()
         
     @classmethod
@@ -19,6 +22,7 @@ class InstrumentManager(object): #FIXME: make iStar.Object subclass
         
         if not _sharedInstrumentManager:
             _sharedInstrumentManager = cls()
+            _sharedInstrumentManager.init()
         
         return _sharedInstrumentManager
     
@@ -72,10 +76,15 @@ class InstrumentManager(object): #FIXME: make iStar.Object subclass
         if hasattr(self._activeInstrument, 'mouseMoved'):
             self._activeInstrument.mouseMoved(event)
     
+    def glassViewForWindow(self, window):
+        pass # OVERRIDE IN SUBCLASSES
+    
     def grabGlassWindowsForInstrument_hijackingInteraction_(self, instrument, hijack):
         pass # OVERRIDE IN SUBCLASSES
 
     def ungrabGlassWindowsForInstrument_(self, instrument):
         pass # OVERRIDE IN SUBCLASSES
+
+InstrumentManager = IStarInstrumentManager
 
 __all__ = 'InstrumentManager'.split()
