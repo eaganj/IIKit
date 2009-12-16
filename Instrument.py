@@ -7,12 +7,14 @@ import warnings
 import jre.debug
 
 from InstrumentManager import *
-#from ScottyController import * # FIXME: refactor this out
 
-class Instrument(object):
+import iStar
+
+class Instrument(iStar.Object):
     _bundleID = None
     
     def __init__(self, instrumentID):
+        super(Instrument, self).__init__()
         self.instrumentID = instrumentID
         self.name = None
         self.verb = None
@@ -67,8 +69,4 @@ class Instrument(object):
         '''
         return None
         
-    # def glassViewForWindow(self, window):
-    #     glassWindow = Scotty().glassWindowForWindow_(window)
-    #     return glassWindow.contentView()
-
 __all__ = 'Instrument'.split()

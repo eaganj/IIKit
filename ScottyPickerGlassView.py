@@ -1,5 +1,5 @@
 from __future__ import with_statement
-#######
+
 from AppKit import *
 from Foundation import *
 import objc

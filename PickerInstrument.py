@@ -9,7 +9,6 @@ import jre.debug
 
 from Instrument import *
 from InstrumentManager import *
-#from PickerGlassView import *
 
 class ScottyPickerInstrument(Instrument):
     def __init__(self, instrumentID):

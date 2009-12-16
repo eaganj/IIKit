@@ -4,9 +4,11 @@ import os.path
 
 import jre.debug
 
+import iStar
+
 _sharedInstrumentManager = None
 
-class IStarInstrumentManager(object): #FIXME: make iStar.Object subclass
+class IStarInstrumentManager(iStar.Object):
     def __init__(self):
         super(IStarInstrumentManager, self).__init__()
         

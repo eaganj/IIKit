@@ -5,9 +5,11 @@ import jre.debug
 from collections import deque
 
 from InstrumentManager import *
+import iStar
 
-class GlassWindow(object):
+class IStarGlassWindow(iStar.Object):
     def __init__(self, parent):
+        super(IStarGlassWindow, self).__init__()
         pass # OVERRIDE IN SUBCLASSES
         
         self._hijacksMouseInteraction = False
@@ -26,5 +28,7 @@ class GlassWindow(object):
     
     def mouseMoved_(self, event):
         pass # OVERRIDE IN SUBCLASSES
+        
+GlassWindow = IStarGlassWindow
         
 __all__ = 'GlassWindow'.split()

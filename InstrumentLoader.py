@@ -16,8 +16,9 @@ import jre.debug
 
 from InstrumentManager import *
 from Instrument import *
+import iStar
 
-class InstrumentLoader(object):
+class InstrumentLoader(iStar.Object):
     currentBundle = None
     
     @classmethod
@@ -72,11 +73,6 @@ class InstrumentLoader(object):
                 sys.path = oldPath
             # Alternative method: use runpy.run_module
     
-        # Old version:
-        # env = copy.copy(globals())
-        # loc = {}
-        # execfile(path, env, loc)
-
 # Make sure we have a catch_warnings context manager (introduced in Python 2.6)
 try:
     from warnings import catch_warnings

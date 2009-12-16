@@ -20,7 +20,7 @@ class ScottyInstrumentManager(InstrumentManager.InstrumentManager):
         searchDirs = [ os.path.join(baseDir, appName, u"Instruments") for baseDir in searchDirs ]
         searchDirs.append(os.path.join(objc.currentBundle().builtInPlugInsPath(), u"Instruments"))
         for searchDir in searchDirs:
-            print "Searching in searchDir", searchDir
+            # print "Searching in searchDir", searchDir
             if os.path.exists(searchDir):
                 pluginPaths = [ os.path.join(searchDir, f) for f in os.listdir(searchDir) 
                                                                             if f.endswith(u'.instrument') ]
