@@ -59,7 +59,7 @@ class ScottyPickerInstrument(Instrument):
     def highlightsOnHover(self):
         return True
     
-    def newGlassViewForWindow(self, window):
+    def newGlassViewForGlassWindow(self, window):
         ''' Subclasses can override this to provide a proper PickerGlassView (see ScottyPickerGlassView).'''
         return None
     

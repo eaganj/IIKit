@@ -11,6 +11,8 @@ import jre.cocoa
 import InstrumentManager
 from ScottyController import Scotty
 
+ModuleBundle = objc.currentBundle()
+
 class ScottyInstrumentManager(InstrumentManager.InstrumentManager):
     def _loadInstrumentPlugins(self):
         from InstrumentLoader import InstrumentLoader
@@ -18,7 +20,7 @@ class ScottyInstrumentManager(InstrumentManager.InstrumentManager):
                                             NSUserDomainMask|NSLocalDomainMask|NSNetworkDomainMask, True)
         appName = u"Scotty"
         searchDirs = [ os.path.join(baseDir, appName, u"Instruments") for baseDir in searchDirs ]
-        searchDirs.append(os.path.join(objc.currentBundle().builtInPlugInsPath(), u"Instruments"))
+        searchDirs.append(os.path.join(ModuleBundle.builtInPlugInsPath(), u"Instruments"))
         for searchDir in searchDirs:
             # print "Searching in searchDir", searchDir
             if os.path.exists(searchDir):
