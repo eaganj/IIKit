@@ -27,9 +27,8 @@ class ScottyGlassWindow(NSWindow, GlassWindowModule.GlassWindow):
         
         GlassWindowModule.GlassWindow.__init__(self, parent)
             
-        self.setBackgroundColor_(NSColor.clearColor())
-        self.setOpaque_(False)
-        self.resetEventsMask()
+        self._hijacksMouseInteraction = False
+        self.reset()
         NSNotificationCenter.defaultCenter().addObserver_selector_name_object_(
                                                                            self,
                                                                            self.parentDidResize_,
@@ -45,6 +44,11 @@ class ScottyGlassWindow(NSWindow, GlassWindowModule.GlassWindow):
         
         return self
     
+    def reset(self):
+        self.setBackgroundColor_(NSColor.clearColor())
+        self.setOpaque_(False)
+        self.resetEventsMask()
+    
     def resetEventsMask(self):
         # NSLeftMouseDown
         # NSLeftMouseUp
@@ -58,8 +62,8 @@ class ScottyGlassWindow(NSWindow, GlassWindowModule.GlassWindow):
         # NSOtherMouseDragged
         # NSMouseEntered
         # NSMouseExited
-        self._handledEventsMask = NSLeftMouseUp|NSLeftMouseDown
-        self._hijacksMouseInteraction = False
+        #self._handledEventsMask = NSLeftMouseUp|NSLeftMouseDown
+        #self._hijacksMouseInteraction = False
         self.setAcceptsMouseMovedEvents_(True)
         
     def parentDidResize_(self, notification):

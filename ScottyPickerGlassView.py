@@ -28,6 +28,7 @@ class ScottyPickerGlassView(NSView):
         self.setNeedsDisplay_(True)
         
     def reset(self):
+        #super(ScottyPickerGlassView, self).reset()
         self._rect = None
         self.setNeedsDisplay_(True)
     

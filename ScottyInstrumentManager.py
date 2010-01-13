@@ -37,10 +37,13 @@ class ScottyInstrumentManager(InstrumentManager.InstrumentManager):
     def glassViewForWindow(self, window):
         # FIXME: refactor into InstrumentManager instead of using Scotty
         glassWindow = Scotty().glassWindowForWindow_(window)
-        return glassWindow.contentView()
+        if glassWindow:
+            return glassWindow.contentView()
+        else:
+            return None
         
     def grabGlassWindowsForInstrument_hijackingInteraction_(self, instrument, hijack):
-        Scotty().grabGlassWindowsForInstrument_hijackingInteraction_(instrument, hijack)
+        return Scotty().grabGlassWindowsForInstrument_hijackingInteraction_(instrument, hijack)
 
     def ungrabGlassWindowsForInstrument_(self, instrument):
         Scotty().ungrabGlassWindowsForInstrument_(instrument)

@@ -14,6 +14,7 @@ class IStarInstrumentManager(iStar.Object):
         
         self._instruments = {}
         self._activeInstrument = None
+        self._glassViewsForInstrument = {}
     
     def init(self):
         self._loadInstrumentPlugins()
@@ -44,18 +45,19 @@ class IStarInstrumentManager(iStar.Object):
         return self._instruments[instrumentID]
     
     def activateInstrument_(self, instrument):
-        self._activeInstrument = instrument
-        self._activeInstrument.activate()
-        if instrument.wantsGlassWindow():
-            self.grabGlassWindowsForInstrument_hijackingInteraction_(instrument,
-                                                                     instrument.shouldHijackInteraction())
+        self._doActivateInstrument(instrument, instrument.activate)
     
     def activateInstrumentOnce_(self, instrument):
+        self._doActivateInstrument_(instrument, instrument.activateOnce)
+        
+    def _doActivateInstrument_(self, instrument, activateMethod):
         self._activeInstrument = instrument
-        self._activeInstrument.activateOnce()
+        activateMethod()
+        self._glassViewsForInstrument[instrument.instrumentID] = set()
         if instrument.wantsGlassWindow():
-            self.grabGlassWindowsForInstrument_hijackingInteraction_(instrument,
+            glassViews = self.grabGlassWindowsForInstrument_hijackingInteraction_(instrument,
                                                                      instrument.shouldHijackInteraction())
+            self._glassViewsForInstrument[instrument.instrumentID].update(glassViews)
     
     def deactivateInstrument_(self, instrument):
         assert self._activeInstrument == instrument
@@ -82,10 +84,15 @@ class IStarInstrumentManager(iStar.Object):
         pass # OVERRIDE IN SUBCLASSES
     
     def grabGlassWindowsForInstrument_hijackingInteraction_(self, instrument, hijack):
-        pass # OVERRIDE IN SUBCLASSES
+        return [] # OVERRIDE IN SUBCLASSES
 
     def ungrabGlassWindowsForInstrument_(self, instrument):
         pass # OVERRIDE IN SUBCLASSES
+    
+    def resetGlassViewsForInstrument_(self, instrument):
+        for glassView in self._glassViewsForInstrument[instrument.instrumentID]:
+            if hasattr(glassView, 'reset'):
+                glassView.reset()
 
 InstrumentManager = IStarInstrumentManager
 

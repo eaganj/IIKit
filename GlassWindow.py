@@ -28,6 +28,9 @@ class IStarGlassWindow(iStar.Object):
     
     def mouseMoved_(self, event):
         pass # OVERRIDE IN SUBCLASSES
+    
+    def reset(self):
+        pass # OVERRIDE IN SUBCLASSES
         
 GlassWindow = IStarGlassWindow
         
