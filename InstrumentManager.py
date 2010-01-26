@@ -29,6 +29,13 @@ class IStarInstrumentManager(iStar.Object):
         
         return _sharedInstrumentManager
     
+    @classmethod
+    def WILDInstrumentManager(cls):
+        # FIXME : refactor this
+        # TODO: add a proper WILDInstrumentManager with a sceneGraph attr
+        return cls.sharedInstrumentManager() 
+        
+    
     def _loadInstrumentPlugins(self):
         pass # OVERRIDE IN SUBCLASSES
     
@@ -66,7 +73,21 @@ class IStarInstrumentManager(iStar.Object):
         self.ungrabGlassWindowsForInstrument_(instrument)
     
     def activeInstrument(self):
-        return self._activeInstrument    
+        return self._activeInstrument
+    
+    @jre.debug.trap_exceptions
+    def handleEvent(self, event):
+        instrument = self._activeInstrument
+        
+        if instrument.stateMachine:
+            print "Passing event to stateMachine"
+            eventWrapper = self._eventMap[event.type()][1]
+            instrument.stateMachine.process_event(eventWrapper(event))
+        else:
+            eventHandlerMethod = getattr(instrument, self._eventMap[event.type()][0], None)
+            print "event type", event.type(), "to", eventHandlerMethod
+            if eventHandlerMethod:
+                eventHandlerMethod(event)
     
     def mouseDown_(self, event):
         if hasattr(self._activeInstrument, 'mouseDown'):
@@ -79,6 +100,10 @@ class IStarInstrumentManager(iStar.Object):
     def mouseMoved_(self, event):
         if hasattr(self._activeInstrument, 'mouseMoved'):
             self._activeInstrument.mouseMoved(event)
+    
+    def mouseDragged_(self, event):
+        if hasattr(self._activeInstrument, 'mouseDragged'):
+            self._activeInstrument.mouseDragged(event)
     
     def glassViewForWindow(self, window):
         pass # OVERRIDE IN SUBCLASSES
@@ -93,6 +118,8 @@ class IStarInstrumentManager(iStar.Object):
         for glassView in self._glassViewsForInstrument[instrument.instrumentID]:
             if hasattr(glassView, 'reset'):
                 glassView.reset()
+    
+    _eventMap = { } # OVERRIDE IN SUBCLASSES
 
 InstrumentManager = IStarInstrumentManager
 

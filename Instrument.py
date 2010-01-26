@@ -25,6 +25,8 @@ class Instrument(iStar.Object):
         self.action = None
         self.target = None
         
+        self.stateMachine = None
+        
         self._bundle_ = None
     
     def isActive(self):

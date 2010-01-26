@@ -16,6 +16,7 @@ import jre.debug
 
 from InstrumentManager import *
 from Instrument import *
+from StateMachines.translator import *
 import iStar
 
 class InstrumentLoader(iStar.Object):
@@ -62,6 +63,10 @@ class InstrumentLoader(iStar.Object):
 
     @classmethod
     def _loadScript(cls, name, path):
+        if path.endswith('.pysm'):
+            cls._translatePySM(path)
+            path = path[:-2]
+            
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", "Parent module '.*' not found")
             try:
@@ -72,6 +77,10 @@ class InstrumentLoader(iStar.Object):
             finally:
                 sys.path = oldPath
             # Alternative method: use runpy.run_module
+    
+    @classmethod
+    def _translatePySM(cls, path):
+        PySMTranslator().translate(path, path[:-2])
     
 # Make sure we have a catch_warnings context manager (introduced in Python 2.6)
 try:

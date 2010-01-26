@@ -98,10 +98,15 @@ class ScottyGlassWindow(NSWindow, GlassWindowModule.GlassWindow):
         #self.resetEventsMask()
         
     def mouseDown_(self, event):
-        InstrumentManager.sharedInstrumentManager().mouseDown_(event)
+        #InstrumentManager.sharedInstrumentManager().mouseDown_(event)
+        InstrumentManager.sharedInstrumentManager().handleEvent(event)
     
     def mouseUp_(self, event):
-        InstrumentManager.sharedInstrumentManager().mouseUp_(event)
+        #InstrumentManager.sharedInstrumentManager().mouseUp_(event)
+        InstrumentManager.sharedInstrumentManager().handleEvent(event)
+    
+    def mouseDragged_(self, event):
+        InstrumentManager.sharedInstrumentManager().handleEvent(event)
     
     def mouseMoved_(self, event):
         super(ScottyGlassWindow, self).mouseMoved_(event)
