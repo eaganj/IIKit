@@ -13,6 +13,7 @@ class IStarInstrumentManager(iStar.Object):
         super(IStarInstrumentManager, self).__init__()
         
         self._instruments = {}
+        self._devices = []
         self._activeInstrument = None
         self._glassViewsForInstrument = {}
     
@@ -29,11 +30,12 @@ class IStarInstrumentManager(iStar.Object):
         
         return _sharedInstrumentManager
     
-    @classmethod
-    def WILDInstrumentManager(cls):
-        # FIXME : refactor this
-        # TODO: add a proper WILDInstrumentManager with a sceneGraph attr
-        return cls.sharedInstrumentManager() 
+    # @classmethod
+    # def WILDInstrumentManager(cls, iibridge, node):
+    #     # FIXME : refactor this
+    #     # TODO: add a proper WILDInstrumentManager with a sceneGraph attr
+    #     import WILDInstrumentManager
+    #     return WILDInstrumentManager.WILDInstrumentManager(iibridge, node)
         
     
     def _loadInstrumentPlugins(self):
@@ -44,6 +46,15 @@ class IStarInstrumentManager(iStar.Object):
     
     def removeInstrument_(self, instrument):
         del self._instruments[instrument.instrumentID]
+    
+    def addDevice(self, device):
+        self._devices.append(device)
+    
+    def removeDevice(self, device):
+        self._devices.remove(device)
+    
+    def deviceChanged(self, device):
+        pass #FIXME
     
     def instruments(self):
         return self._instruments.values()

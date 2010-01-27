@@ -3,6 +3,7 @@ try:
     import Foundation
     import AppKit
     import objc    
+    raise ImportError()
 except ImportError:
     # PyObjC not found -- ignore and don't try loading Cocoa extensions
     from Instrument import *
