@@ -273,3 +273,6 @@ class EventTypeBeginGesture(CocoaEvent):
 class EventTypeEndGesture(CocoaEvent):
     def __init__(self, **options):
         super(EventTypeEndGesture, self).__init__(NSEventTypeEndGesture, **options)
+    
+__all__ = [ clsName for clsName, cls in locals().items() \
+                if isinstance(cls, type) and issubclass(cls, CocoaEvent) ]
