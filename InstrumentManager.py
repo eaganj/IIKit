@@ -63,7 +63,7 @@ class IStarInstrumentManager(iStar.Object):
         return self._instruments[instrumentID]
     
     def activateInstrument_(self, instrument):
-        self._doActivateInstrument(instrument, instrument.activate)
+        self._doActivateInstrument_(instrument, instrument.activate)
     
     def activateInstrumentOnce_(self, instrument):
         self._doActivateInstrument_(instrument, instrument.activateOnce)

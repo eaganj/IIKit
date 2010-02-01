@@ -49,8 +49,8 @@ class InstrumentLoader(iStar.Object):
             instrumentManager = InstrumentManager.sharedInstrumentManager()
             for instrumentClass in instruments:
                 instrumentID = u'%s/%s' % (bundleID, instrumentClass.__name__)
-                #print 'Adding instrument', instrumentID
-                instrument = instrumentClass(instrumentID)
+                print 'Adding instrument', instrumentID
+                instrument = instrumentClass(instrumentID, instrumentManager.sceneGraph)
                 instrument._bundle_ = bundle
                 instrumentManager.addInstrument_(instrument)
         finally:
