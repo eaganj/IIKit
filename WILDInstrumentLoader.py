@@ -64,13 +64,18 @@ class InstrumentLoader(iStar.Object):
             
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", "Parent module '.*' not found")
+            parentName = name[:name.rfind('.')]
+            parent = imp.new_module(parentName)
             try:
                 oldPath = copy.copy(sys.path)
+                oldModules = copy.copy(sys.modules)
+                sys.modules[parentName] = parent
                 sys.path.append(os.path.dirname(path))
                 module = imp.load_source(name, path)
                 return module
             finally:
                 sys.path = oldPath
+                sys.modules = oldModules
             # Alternative method: use runpy.run_module
     
     @classmethod
