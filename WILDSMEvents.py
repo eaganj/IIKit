@@ -1,8 +1,10 @@
 from StateMachines import Event
 
-def wrapEvent(event, namespace=None):
+def wrapEvent(event, instrument=None, namespace=None):
     # FIXME: Need to create a binding/mapping protocol for device events
     etype, device, name, value = event
+    if instrument:
+        device = instrument.registeredDevices.get(device, device)
     
     # if (device, name) == ('Mouse', 'Point') or (device, name) == ('VICON', 'Position'):
     #     return PointEvent(*event)
@@ -23,6 +25,13 @@ class WILDEvent(Event):
         self.device = device
         self.name = name
         self.value = value
+    
+    def match(self, transition):
+        # First check if a device was specified in the transition
+        if 'device' in transition.kwargs:
+            return transition.kwargs['device'] == self.device
+        else:
+            return True
     
 class PointEvent(WILDEvent):
     pass

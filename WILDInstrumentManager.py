@@ -28,7 +28,7 @@ class WILDInstrumentManager(iStarWrapper.Object, InstrumentManager.InstrumentMan
         print instrument, instrument and instrument.stateMachine
         if instrument and instrument.stateMachine:
             #pdb.set_trace()
-            wildEvent = events.wrapEvent(event)
+            wildEvent = events.wrapEvent(event, instrument=instrument)
             instrument.stateMachine.process_event(wildEvent)
     
     def _loadInstrumentPlugins(self):
@@ -57,6 +57,7 @@ class WILDInstrumentManager(iStarWrapper.Object, InstrumentManager.InstrumentMan
         # FIXME: create instrument selection interface
         if self._instruments:
             instrument = self._instruments.values()[0]
+            instrument.registeredDevices = { 'VICON': 'pointer', }
             self.activateInstrument_(self._instruments.values()[0])
     
     # def _doActivateInstrument_(self, instrument, activateMethod):

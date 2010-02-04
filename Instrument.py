@@ -26,6 +26,7 @@ class Instrument(iStar.Object):
         self.target = None
         
         self.stateMachine = None
+        self.registeredDevices = {} # Used to map physical devices to logical names
         
         self._bundle_ = None
     
