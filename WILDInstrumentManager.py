@@ -56,9 +56,10 @@ class WILDInstrumentManager(iStarWrapper.Object, InstrumentManager.InstrumentMan
         
         # FIXME: create instrument selection interface
         if self._instruments:
-            instrument = self._instruments.values()[0]
+            instrument = self._instruments.get('fr.lri.eaganj.instrument.Mover/MoveInstrument',
+                                               self._instruments.values()[0])
             instrument.registeredDevices = { 'VICON': 'pointer', }
-            self.activateInstrument_(self._instruments.values()[0])
+            self.activateInstrument_(instrument)
     
     # def _doActivateInstrument_(self, instrument, activateMethod):
     #     curriedActivateMethod = lambda instrumentID: activateMethod(instrumentID, self.sceneGraph)
