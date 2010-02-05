@@ -25,7 +25,6 @@ class WILDInstrumentManager(iStarWrapper.Object, InstrumentManager.InstrumentMan
         # print "event:", namespace, event
         instrument = self._activeInstrument
         
-        print instrument, instrument and instrument.stateMachine
         if instrument and instrument.stateMachine:
             #pdb.set_trace()
             wildEvent = events.wrapEvent(event, instrument=instrument)
