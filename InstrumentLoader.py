@@ -55,9 +55,8 @@ class InstrumentLoader(iStar.Object):
             for instrumentClass in instruments:
                 instrumentID = u'%s/%s' % (bundleID, instrumentClass.__name__)
                 #print 'Adding instrument', instrumentID
-                instrument = instrumentClass(instrumentID)
-                instrument._bundle_ = bundle
-                instrumentManager.addInstrument_(instrument)
+                instrumentClass.registerInstrument(instrumentID, bundle)
+                instrumentManager.addInstrument_(instrumentClass)
         finally:
             cls.currentBundle = None
 

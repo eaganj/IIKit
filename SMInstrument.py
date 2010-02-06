@@ -2,9 +2,10 @@ from Instrument import *
 from StateMachines import *
 
 class SMInstrument(Instrument, statemachine):
-    def __init__(self, instrumentID):
-        Instrument.__init__(self, instrumentID)
-        statemachine.__init__(self)
+    def __init__(self):
+        super(SMInstrument, self).__init__()
+        #Instrument.__init__(self)
+        #statemachine.__init__(self)
          
         self.stateMachine = self
          

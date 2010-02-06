@@ -68,9 +68,10 @@ class IStarInstrumentManager(iStar.Object):
     def activateInstrumentOnce_(self, instrument):
         self._doActivateInstrument_(instrument, instrument.activateOnce)
         
-    def _doActivateInstrument_(self, instrument, activateMethod):
+    def _doActivateInstrument_(self, instrumentClass, activateMethod):
+        instrument = instrumentClass()
         self._activeInstrument = instrument
-        activateMethod()
+        activateMethod(instrument)
         self._glassViewsForInstrument[instrument.instrumentID] = set()
         if instrument.wantsGlassWindow():
             glassViews = self.grabGlassWindowsForInstrument_hijackingInteraction_(instrument,

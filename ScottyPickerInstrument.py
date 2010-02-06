@@ -11,8 +11,8 @@ import PickerInstrument
 from ScottyPickerGlassView import *
 
 class ScottyPickerInstrument(PickerInstrument.PickerInstrument):
-    def __init__(self, instrumentID):
-        super(ScottyPickerInstrument, self).__init__(instrumentID)
+    def __init__(self):
+        super(ScottyPickerInstrument, self).__init__()
         self.highlightFillColor = NSColor.colorWithCalibratedRed_green_blue_alpha_(1.0, 0.0, 0.0, 0.125)
         self.highlightBorderColor = NSColor.colorWithCalibratedRed_green_blue_alpha_(1.0, 0.0, 0.0, 0.25)
     

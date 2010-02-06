@@ -11,9 +11,11 @@ from Instrument import *
 from InstrumentManager import *
 
 class ScottyPickerInstrument(Instrument):
-    def __init__(self, instrumentID):
-        super(ScottyPickerInstrument, self).__init__(instrumentID)
-        self.name = u"Pick object"
+    name = u"Object picker"
+    verb = u"Pick object"
+    
+    def __init__(self):
+        super(ScottyPickerInstrument, self).__init__()
         self.highlightFillColor = 'pink'
         self.highlightBorderColor = 'red'
         self.reset()

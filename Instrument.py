@@ -12,13 +12,20 @@ import iStar
 
 class Instrument(iStar.Object):
     _bundleID = None
+    _bundle_ = None
+    instrumentID = None
+    name = None
+    verb = None
     
-    def __init__(self, instrumentID):
-        super(Instrument, self).__init__()
-        self.instrumentID = instrumentID
-        self.name = None
-        self.verb = None
-        
+    @classmethod
+    def registerInstrument(cls, instrumentID, bundle=None):
+        cls.instrumentID = instrumentID
+        cls._bundle_ = bundle
+        if bundle:
+            cls._bundleID = bundle.bundleIdentifier()
+    
+    def __init__(self):
+        super(Instrument, self).__init__()        
         self._active = False
         self._activatedOnce = False
         
@@ -28,7 +35,7 @@ class Instrument(iStar.Object):
         self.stateMachine = None
         self.registeredDevices = {} # Used to map physical devices to logical names
         
-        self._bundle_ = None
+        #self._bundle_ = None
     
     def isActive(self):
         return self._active
