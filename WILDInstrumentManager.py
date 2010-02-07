@@ -19,6 +19,7 @@ class WILDInstrumentManager(iStarWrapper.Object, InstrumentManager.InstrumentMan
         
         self.sceneGraph = sceneGraph
         self.init()
+        print "WILD Instrument manager successfully registered"
         
     @jre.debug.trap_exceptions
     def handleEvent(self, event, namespace):
@@ -57,8 +58,12 @@ class WILDInstrumentManager(iStarWrapper.Object, InstrumentManager.InstrumentMan
         if self._instruments:
             instrument = self._instruments.get('fr.lri.eaganj.instrument.Mover/MoveInstrument',
                                                self._instruments.values()[0])
-            instrument.registeredDevices = { 'VICON': 'pointer', }
             self.activateInstrument_(instrument)
+    
+    def _doActivateInstrument_(self, instrument, activateMethod):
+        instrument.registeredDevices = { 'VICON': 'pointer', }
+        instrument.sceneGraph = self.sceneGraph
+        super(WILDInstrumentManager, self)._doActivateInstrument_(instrument, activateMethod)
     
     # def _doActivateInstrument_(self, instrument, activateMethod):
     #     curriedActivateMethod = lambda instrumentID: activateMethod(instrumentID, self.sceneGraph)
