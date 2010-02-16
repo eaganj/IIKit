@@ -7,6 +7,7 @@ import jre.debug
 import iStar
 
 _sharedInstrumentManager = None
+_eventWrappers = { }
 
 class IStarInstrumentManager(iStar.Object):
     def __init__(self):
@@ -87,20 +88,26 @@ class IStarInstrumentManager(iStar.Object):
     def activeInstrument(self):
         return self._activeInstrument
     
+    @classmethod
+    def registerEventWrapper(cls, wrapper, namespace):
+        assert namespace not in _eventWrappers, "Handler already registered for namespace"
+        _eventWrappers[namespace] = wrapper
+        
     @jre.debug.trap_exceptions
-    def handleEvent(self, event):
+    def handleEvent(self, rawEvent, namespace):
         instrument = self._activeInstrument
         
+        event, handlerMethodName = self._wrapEvent(rawEvent, namespace)
         if instrument.stateMachine:
-            print "Passing event to stateMachine"
-            eventWrapper = self._eventMap[event.type()][1]
-            instrument.stateMachine.process_event(eventWrapper(event))
-        else:
-            eventHandlerMethod = getattr(instrument, self._eventMap[event.type()][0], None)
-            print "event type", event.type(), "to", eventHandlerMethod
-            if eventHandlerMethod:
-                eventHandlerMethod(event)
+            instrument.stateMachine.process_event(event)
+        elif handlerMethodName:
+            handlerMethod = getattr(instrument, handlerMethodName, None)
+            if handlerMethod:
+                handlerMethod(event)
     
+    def _wrapEvent(self, event, namespace):
+        return _eventWrappers[namespace](event)
+        
     def mouseDown_(self, event):
         if hasattr(self._activeInstrument, 'mouseDown'):
             self._activeInstrument.mouseDown(event)
@@ -131,7 +138,6 @@ class IStarInstrumentManager(iStar.Object):
             if hasattr(glassView, 'reset'):
                 glassView.reset()
     
-    _eventMap = { } # OVERRIDE IN SUBCLASSES
 
 InstrumentManager = IStarInstrumentManager
 

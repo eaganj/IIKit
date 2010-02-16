@@ -3,6 +3,7 @@ from Foundation import *
 import objc
 
 from StateMachines import *
+from InstrumentManager import InstrumentManager
 
 import copy
 
@@ -273,6 +274,50 @@ class EventTypeBeginGesture(CocoaEvent):
 class EventTypeEndGesture(CocoaEvent):
     def __init__(self, **options):
         super(EventTypeEndGesture, self).__init__(NSEventTypeEndGesture, **options)
+
+
+def cocoaEventWrapper(event):
+    etype = event.type()
+    if etype in _eventMap:
+        handlerName, eventClass = _eventMap[etype]
+        return eventClass(event), handlerName
+    else:
+        return CocoaEvent(event), None
+
+InstrumentManager.registerEventWrapper(cocoaEventWrapper, 'fr.lri.insitu.Scotty')
     
+_eventMap = { 
+                NSLeftMouseDown: ('mouseDown', LeftMouseDown),
+                NSLeftMouseUp: ('mouseUp', LeftMouseUp),
+                NSRightMouseDown: ('rightMouseDown', RightMouseDown),
+                NSRightMouseUp: ('rightMouseUp', RightMouseUp),
+                NSMouseMoved: ('mouseMoved', MouseMoved),
+                NSLeftMouseDragged: ('mouseDragged', LeftMouseDragged),
+                NSRightMouseDragged: ('rightMouseDragged', RightMouseDragged),
+                # TODO:
+                # NSMouseEntered
+                # NSMouseExited       
+                # NSKeyDown            
+                # NSKeyUp              
+                # NSFlagsChanged       
+                # NSAppKitDefined      
+                # NSSystemDefined      
+                # NSApplicationDefined 
+                # NSPeriodic           
+                # NSCursorUpdate       
+                # NSScrollWheel        
+                # NSTabletPoint        
+                # NSTabletProximity    
+                # NSOtherMouseDown     
+                # NSOtherMouseUp       
+                # NSOtherMouseDragged 
+                # NSEventTypeGesture   
+                # NSEventTypeMagnify   
+                # NSEventTypeSwipe     
+                # NSEventTypeRotate    
+                # NSEventTypeBeginGesture 
+                # NSEventTypeEndGesture
+            }
+
 __all__ = [ clsName for clsName, cls in locals().items() \
-                if isinstance(cls, type) and issubclass(cls, CocoaEvent) ]
+                if isinstance(cls, type) and issubclass(cls, CocoaEvent) ] + [ 'cocoaEventWrapper', ]

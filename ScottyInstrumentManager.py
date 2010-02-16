@@ -10,7 +10,6 @@ import jre.cocoa
 
 import InstrumentManager
 from ScottyController import Scotty
-import ScottySMEvents as events
 
 ModuleBundle = objc.currentBundle()
 
@@ -48,39 +47,6 @@ class ScottyInstrumentManager(InstrumentManager.InstrumentManager):
 
     def ungrabGlassWindowsForInstrument_(self, instrument):
         Scotty().ungrabGlassWindowsForInstrument_(instrument)
-    
-    _eventMap = { 
-                    NSLeftMouseDown: ('mouseDown', events.LeftMouseDown),
-                    NSLeftMouseUp: ('mouseUp', events.LeftMouseUp),
-                    NSRightMouseDown: ('rightMouseDown', events.RightMouseDown),
-                    NSRightMouseUp: ('rightMouseUp', events.RightMouseUp),
-                    NSMouseMoved: ('mouseMoved', events.MouseMoved),
-                    NSLeftMouseDragged: ('mouseDragged', events.LeftMouseDragged),
-                    NSRightMouseDragged: ('rightMouseDragged', events.RightMouseDragged),
-                    # TODO:
-                    # NSMouseEntered
-                    # NSMouseExited       
-                    # NSKeyDown            
-                    # NSKeyUp              
-                    # NSFlagsChanged       
-                    # NSAppKitDefined      
-                    # NSSystemDefined      
-                    # NSApplicationDefined 
-                    # NSPeriodic           
-                    # NSCursorUpdate       
-                    # NSScrollWheel        
-                    # NSTabletPoint        
-                    # NSTabletProximity    
-                    # NSOtherMouseDown     
-                    # NSOtherMouseUp       
-                    # NSOtherMouseDragged 
-                    # NSEventTypeGesture   
-                    # NSEventTypeMagnify   
-                    # NSEventTypeSwipe     
-                    # NSEventTypeRotate    
-                    # NSEventTypeBeginGesture 
-                    # NSEventTypeEndGesture
-                }
 
 InstrumentManager.InstrumentManager = ScottyInstrumentManager # Override InstrumentManager with Scotty version
 InstrumentManager = ScottyInstrumentManager

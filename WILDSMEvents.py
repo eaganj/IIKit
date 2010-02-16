@@ -3,7 +3,7 @@ from StateMachines import Event
 def wrapEvent(event, instrument=None, namespace=None):
     # FIXME: Need to create a binding/mapping protocol for device events
     etype, device, name, value = event
-    if instrument:
+    if instrument: # FIXME: this needs to be processed somewhere else.  Also, currently 0xDEADC0DE
         device = instrument.registeredDevices.get(device, device)
     
     # if (device, name) == ('Mouse', 'Point') or (device, name) == ('VICON', 'Position'):
@@ -16,6 +16,8 @@ def wrapEvent(event, instrument=None, namespace=None):
         return PointEvent(*event)
     elif (etype, name) == ('Toggling', 'Pressed'):
         return ButtonPressEvent(*event) if value and value[0] else ButtonReleaseEvent(*event)
+    elif (etype, name) == ('Scotty', 'Pressed'):
+        return ScottyPressEvent(*event) if value.pressed else ScottyReleaseEvent(*event)
     else:
         return WILDEvent(*event)
 
@@ -43,6 +45,12 @@ class ButtonPressEvent(ButtonEvent):
     pass
 
 class ButtonReleaseEvent(ButtonEvent):
+    pass
+
+class ScottyPressEvent(WILDEvent):
+    pass
+
+class ScottyReleaseEvent(WILDEvent):
     pass
 
 
