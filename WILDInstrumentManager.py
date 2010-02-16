@@ -32,7 +32,7 @@ class WILDInstrumentManager(iStarWrapper.Object, InstrumentManager.InstrumentMan
             instrument.stateMachine.process_event(wildEvent)
     
     def _loadInstrumentPlugins(self):
-        from WILDInstrumentLoader import InstrumentLoader
+        from InstrumentLoader import InstrumentLoader
         searchDirs = [ u'~/Library/Application Support/WILD Instruments',
                        u'~/.wild/instruments',
                        u'/Library/Application Support/WILD Instruments',
@@ -61,7 +61,8 @@ class WILDInstrumentManager(iStarWrapper.Object, InstrumentManager.InstrumentMan
             self.activateInstrument_(instrument)
     
     def _doActivateInstrument_(self, instrument, activateMethod):
-        instrument.registeredDevices = { 'VICON': 'pointer', }
+        instrument.registeredDevices = { 'VICON': 'pointer', 
+                                         'Ruler1': 'pointer2', }
         instrument.sceneGraph = self.sceneGraph
         super(WILDInstrumentManager, self)._doActivateInstrument_(instrument, activateMethod)
     

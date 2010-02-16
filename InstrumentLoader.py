@@ -1,18 +1,13 @@
 from __future__ import with_statement
 
-### TODO:  Implement pure-Python bundle loading
-from Foundation import *
-from AppKit import *
-import objc
-
 import copy
 import imp
 import os
 import sys
 import warnings
 
-import jre.cocoa
 import jre.debug
+from jre.util.bundle import Bundle
 
 from InstrumentManager import *
 from Instrument import *
@@ -25,7 +20,7 @@ class InstrumentLoader(iStar.Object):
     @classmethod
     @jre.debug.trap_exceptions
     def loadInstrumentFromBundlePath(cls, bundlePath):
-        bundle = NSBundle.bundleWithPath_(bundlePath)
+        bundle = Bundle.bundleWithPath_(bundlePath)
         cls.currentBundle = bundle
         try:
             bundleID = bundle.bundleIdentifier()
@@ -75,7 +70,11 @@ class InstrumentLoader(iStar.Object):
                 oldModules = copy.copy(sys.modules)
                 sys.modules[parentName] = parent
                 sys.path.append(os.path.dirname(path))
-                module = imp.load_source(name, path)
+                if os.path.exists(path + 'c') and \
+                    not os.path.exists(path) or os.stat(path + 'c').st_mtime >= os.stat(path).st_mtime:
+                    module = imp.load_compiled(name, path + 'c')
+                else:
+                    module = imp.load_source(name, path)
                 return module
             finally:
                 sys.path = oldPath
