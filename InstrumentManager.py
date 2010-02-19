@@ -15,7 +15,8 @@ class IStarInstrumentManager(iStar.Object):
         
         self._instruments = {}
         self._devices = []
-        self._activeInstrument = None
+        # self._activeInstrument = None
+        self._activeInstruments = []
         self._glassViewsForInstrument = {}
     
     def init(self):
@@ -72,6 +73,7 @@ class IStarInstrumentManager(iStar.Object):
     def _doActivateInstrument_(self, instrumentClass, activateMethod):
         instrument = instrumentClass()
         self._activeInstrument = instrument
+        self._activeInstruments.append(instrument)
         activateMethod(instrument)
         self._glassViewsForInstrument[instrument.instrumentID] = set()
         if instrument.wantsGlassWindow():
@@ -80,14 +82,12 @@ class IStarInstrumentManager(iStar.Object):
             self._glassViewsForInstrument[instrument.instrumentID].update(glassViews)
     
     def deactivateInstrument_(self, instrument):
-        assert self._activeInstrument == instrument
+        # assert self._activeInstrument == instrument
         self._activeInstrument.deactivate()
         self._activeInstrument = None
+        self._activeInstruments.remove(instrument)
         self.ungrabGlassWindowsForInstrument_(instrument)
-    
-    def activeInstrument(self):
-        return self._activeInstrument
-    
+        
     @classmethod
     def registerEventWrapper(cls, wrapper, namespace):
         assert namespace not in _eventWrappers, "Handler already registered for namespace"
@@ -95,34 +95,39 @@ class IStarInstrumentManager(iStar.Object):
         
     @jre.debug.trap_exceptions
     def handleEvent(self, rawEvent, namespace):
-        instrument = self._activeInstrument
+        for instrument in reversed(self._activeInstruments):        
+            event, handlerMethodName = self._wrapEvent(rawEvent, namespace)
+            # print "handleEvent:", event, handlerMethodName
+            if instrument.stateMachine:
+                handled = instrument.stateMachine.process_event(event)
+                if handled:
+                    return True
+            elif handlerMethodName:
+                handlerMethod = getattr(instrument, handlerMethodName, None)
+                if handlerMethod:
+                    handlerMethod(event)
+                    return True
         
-        event, handlerMethodName = self._wrapEvent(rawEvent, namespace)
-        if instrument.stateMachine:
-            instrument.stateMachine.process_event(event)
-        elif handlerMethodName:
-            handlerMethod = getattr(instrument, handlerMethodName, None)
-            if handlerMethod:
-                handlerMethod(event)
+        return False
     
     def _wrapEvent(self, event, namespace):
         return _eventWrappers[namespace](event)
         
-    def mouseDown_(self, event):
-        if hasattr(self._activeInstrument, 'mouseDown'):
-            self._activeInstrument.mouseDown(event)
-    
-    def mouseUp_(self, event):
-        if hasattr(self._activeInstrument, 'mouseUp'):
-            self._activeInstrument.mouseUp(event)
-    
-    def mouseMoved_(self, event):
-        if hasattr(self._activeInstrument, 'mouseMoved'):
-            self._activeInstrument.mouseMoved(event)
-    
-    def mouseDragged_(self, event):
-        if hasattr(self._activeInstrument, 'mouseDragged'):
-            self._activeInstrument.mouseDragged(event)
+    # def mouseDown_(self, event):
+    #     if hasattr(self._activeInstrument, 'mouseDown'):
+    #         self._activeInstrument.mouseDown(event)
+    # 
+    # def mouseUp_(self, event):
+    #     if hasattr(self._activeInstrument, 'mouseUp'):
+    #         self._activeInstrument.mouseUp(event)
+    # 
+    # def mouseMoved_(self, event):
+    #     if hasattr(self._activeInstrument, 'mouseMoved'):
+    #         self._activeInstrument.mouseMoved(event)
+    # 
+    # def mouseDragged_(self, event):
+    #     if hasattr(self._activeInstrument, 'mouseDragged'):
+    #         self._activeInstrument.mouseDragged(event)
     
     def glassViewForWindow(self, window):
         pass # OVERRIDE IN SUBCLASSES
