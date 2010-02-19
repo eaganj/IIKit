@@ -2,6 +2,7 @@ from AppKit import *
 from Foundation import *
 import objc
 
+from IIKit import *
 from StateMachines import *
 from InstrumentManager import InstrumentManager
 
@@ -73,6 +74,13 @@ class CocoaEvent(Event):
         return self._cocoa_event.timestamp()
     
     def window(self):
+        window = self._cocoa_event.window()
+        if isinstance(window, (GlassWindow,)):
+            return window.parentWindow()
+        else:
+            return window
+            
+    def cocoaWindow(self):
         # FIXME: check if event is really delivered to a glass window !
         window = self._cocoa_event.window()
         if not window:
@@ -118,8 +126,11 @@ class CocoaEvent(Event):
     # TODO:  Other Cocoa Event info (See NSEvent API Ref)
 
 class MouseDown(CocoaEvent):
-    def __init__(self, **options):
-        super(MouseDown, self).__init__(NSMouseEvent, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(MouseDown, self).__init__(args[0], **options)
+        else:
+            super(MouseDown, self).__init__(NSMouseEvent, **options)
 
 # NSLeftMouseDown
 class LeftMouseDown(CocoaEvent):
@@ -139,18 +150,27 @@ class LeftMouseUp(CocoaEvent):
     
 # NSRightMouseDown
 class RightMouseDown(CocoaEvent):
-    def __init__(self, **options):
-        super(RightMouseDown, self).__init__(NSRightMouseDown, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(RightMouseDown, self).__init__(args[0], **options)
+        else:
+            super(RightMouseDown, self).__init__(NSRightMouseDown, **options)
     
 # NSRightMouseUp
 class RightMouseUp(CocoaEvent):
-    def __init__(self, **options):
-        super(RightMouseUp, self).__init__(NSRightMouseUp, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(RightMouseUp, self).__init__(args[0], **options)
+        else:
+            super(RightMouseUp, self).__init__(NSRightMouseUp, **options)
     
 # NSMouseMoved
 class MouseMoved(CocoaEvent):
-    def __init__(self, **options):
-        super(MouseMoved, self).__init__(NSMouseMoved, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(MouseMoved, self).__init__(args[0], **options)
+        else:
+            super(MouseMoved, self).__init__(NSMouseMoved, **options)
     
 # NSLeftMouseDragged
 class LeftMouseDragged(CocoaEvent):
@@ -162,118 +182,187 @@ class LeftMouseDragged(CocoaEvent):
     
 # NSRightMouseDragged 
 class RightMouseDragged(CocoaEvent):
-    def __init__(self, **options):
-        super(RightMouseDragged, self).__init__(NSRightMouseDragged, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(RightMouseDragged, self).__init__(args[0], **options)
+        else:
+            super(RightMouseDragged, self).__init__(NSRightMouseDragged, **options)
 
 # NSMouseEntered
 class MouseEntered(CocoaEvent):
-    def __init__(self, **options):
-        super(MouseEntered, self).__init__(NSMouseEntered, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(MouseEntered, self).__init__(args[0], **options)
+        else:
+            super(MouseEntered, self).__init__(NSMouseEntered, **options)
     
 # NSMouseExited
 class MouseExited(CocoaEvent):
-    def __init__(self, **options):
-        super(MouseExited, self).__init__(NSMouseExited, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(MouseExited, self).__init__(args[0], **options)
+        else:
+            super(MouseExited, self).__init__(NSMouseExited, **options)
     
 # NSKeyDown
 class KeyDown(CocoaEvent):
-    def __init__(self, **options):
-        super(KeyDown, self).__init__(NSKeyDown, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(KeyDown, self).__init__(args[0], **options)
+        else:
+            super(KeyDown, self).__init__(NSKeyDown, **options)
     
 # NSKeyUp
 class KeyUp(CocoaEvent):
-    def __init__(self, **options):
-        super(KeyUp, self).__init__(NSKeyUp, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(KeyUp, self).__init__(args[0], **options)
+        else:
+            super(KeyUp, self).__init__(NSKeyUp, **options)
     
 # NSFlagsChanged
 class FlagsChanged(CocoaEvent):
-    def __init__(self, **options):
-        super(FlagsChanged, self).__init__(NSFlagsChanged, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(FlagsChanged, self).__init__(args[0], **options)
+        else:
+            super(FlagsChanged, self).__init__(NSFlagsChanged, **options)
     
 # NSAppKitDefined
 class AppKitDefined(CocoaEvent):
-    def __init__(self, **options):
-        super(AppKitDefined, self).__init__(NSAppKitDefined, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(AppKitDefined, self).__init__(args[0], **options)
+        else:
+            super(AppKitDefined, self).__init__(NSAppKitDefined, **options)
     
 # NSSystemDefined
 class SystemDefined(CocoaEvent):
-    def __init__(self, **options):
-        super(SystemDefined, self).__init__(NSSystemDefined, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(SystemDefined, self).__init__(args[0], **options)
+        else:
+            super(SystemDefined, self).__init__(NSSystemDefined, **options)
     
 # NSApplicationDefined 
 class ApplicationDefined(CocoaEvent):
-    def __init__(self, **options):
-        super(ApplicationDefined, self).__init__(ApplicationDefined, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(ApplicationDefined, self).__init__(args[0], **options)
+        else:
+            super(ApplicationDefined, self).__init__(ApplicationDefined, **options)
 
 # NSPeriodic
 class Periodic(CocoaEvent):
-    def __init__(self, **options):
-        super(Periodic, self).__init__(NSPeriodic, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(Periodic, self).__init__(args[0], **options)
+        else:
+            super(Periodic, self).__init__(NSPeriodic, **options)
     
 # NSCursorUpdate
 class CursorUpdate(CocoaEvent):
-    def __init__(self, **options):
-        super(CursorUpdate, self).__init__(NSCursorUpdate, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(CursorUpdate, self).__init__(args[0], **options)
+        else:
+            super(CursorUpdate, self).__init__(NSCursorUpdate, **options)
     
 # NSScrollWheel
 class ScrollWheel(CocoaEvent):
-    def __init__(self, **options):
-        super(ScrollWheel, self).__init__(NSScrollWheel, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(ScrollWheel, self).__init__(args[0], **options)
+        else:
+            super(ScrollWheel, self).__init__(NSScrollWheel, **options)
     
 # NSTabletPoint
 class TabletPoint(CocoaEvent):
-    def __init__(self, **options):
-        super(TabletPoint, self).__init__(NSTabletPoint, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(TabletPoint, self).__init__(args[0], **options)
+        else:
+            super(TabletPoint, self).__init__(NSTabletPoint, **options)
     
 # NSTabletProximity
 class TabletProximity(CocoaEvent):
-    def __init__(self, **options):
-        super(TabletProximity, self).__init__(NSTabletProximity, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(TabletProximity, self).__init__(args[0], **options)
+        else:
+            super(TabletProximity, self).__init__(NSTabletProximity, **options)
     
 # NSOtherMouseDown
 class OtherMouseDown(CocoaEvent):
-    def __init__(self, **options):
-        super(OtherMouseDown, self).__init__(NSOtherMouseDown, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(OtherMouseDown, self).__init__(args[0], **options)
+        else:
+            super(OtherMouseDown, self).__init__(NSOtherMouseDown, **options)
     
 # NSOtherMouseUp
 class OtherMouseUp(CocoaEvent):
-    def __init__(self, **options):
-        super(OtherMouseUp, self).__init__(NSOtherMouseUp, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(OtherMouseUp, self).__init__(args[0], **options)
+        else:
+            super(OtherMouseUp, self).__init__(NSOtherMouseUp, **options)
     
 # NSOtherMouseDragged
 class OtherMouseDragged(CocoaEvent):
-    def __init__(self, **options):
-        super(OtherMouseDragged, self).__init__(NSOtherMouseDragged, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(OtherMouseDragged, self).__init__(args[0], **options)
+        else:
+            super(OtherMouseDragged, self).__init__(NSOtherMouseDragged, **options)
 
 # NSEventTypeGesture
 class EventTypeGesture(CocoaEvent):
-    def __init__(self, **options):
-        super(EventTypeGesture, self).__init__(NSEventTypeGesture, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(EventTypeGesture, self).__init__(args[0], **options)
+        else:
+            super(EventTypeGesture, self).__init__(NSEventTypeGesture, **options)
     
 # NSEventTypeMagnify
 class EventTypeMagnify(CocoaEvent):
-    def __init__(self, **options):
-        super(EventTypeMagnify, self).__init__(NSEventTypeMagnify, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(EventTypeMagnify, self).__init__(args[0], **options)
+        else:
+            super(EventTypeMagnify, self).__init__(NSEventTypeMagnify, **options)
     
 # NSEventTypeSwipe
 class EventTypeSwipe(CocoaEvent):
-    def __init__(self, **options):
-        super(EventTypeSwipe, self).__init__(NSEventTypeSwipe, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(EventTypeSwipe, self).__init__(args[0], **options)
+        else:
+            super(EventTypeSwipe, self).__init__(NSEventTypeSwipe, **options)
     
 # NSEventTypeRotate
 class EventTypeRotate(CocoaEvent):
-    def __init__(self, **options):
-        super(EventTypeRotate, self).__init__(NSEventTypeRotate, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(EventTypeRotate, self).__init__(args[0], **options)
+        else:
+            super(EventTypeRotate, self).__init__(NSEventTypeRotate, **options)
     
 # NSEventTypeBeginGesture
 class EventTypeBeginGesture(CocoaEvent):
-    def __init__(self, **options):
-        super(EventTypeBeginGesture, self).__init__(NSEventTypeBeginGesture, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(EventTypeBeginGesture, self).__init__(args[0], **options)
+        else:
+            super(EventTypeBeginGesture, self).__init__(NSEventTypeBeginGesture, **options)
 
 # NSEventTypeEndGesture
 class EventTypeEndGesture(CocoaEvent):
-    def __init__(self, **options):
-        super(EventTypeEndGesture, self).__init__(NSEventTypeEndGesture, **options)
+    def __init__(self, *args, **options):
+        if args:
+            super(EventTypeEndGesture, self).__init__(args[0], **options)
+        else:
+            super(EventTypeEndGesture, self).__init__(NSEventTypeEndGesture, **options)
 
 
 def cocoaEventWrapper(event):
