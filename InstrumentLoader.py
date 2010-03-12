@@ -71,7 +71,7 @@ class InstrumentLoader(iStar.Object):
                 sys.modules[parentName] = parent
                 sys.path.append(os.path.dirname(path))
                 if os.path.exists(path + 'c') and \
-                    not os.path.exists(path) or os.stat(path + 'c').st_mtime >= os.stat(path).st_mtime:
+                    (not os.path.exists(path) or os.stat(path + 'c').st_mtime >= os.stat(path).st_mtime):
                     module = imp.load_compiled(name, path + 'c')
                 else:
                     module = imp.load_source(name, path)
