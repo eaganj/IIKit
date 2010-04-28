@@ -59,6 +59,7 @@ class WILDInstrumentManager(iStarWrapper.Object, InstrumentManager.InstrumentMan
             instrument = self._instruments.get('fr.lri.eaganj.instrument.Mover/MoveInstrument',
                                                self._instruments.values()[0])
             self.activateInstrument_(instrument)
+
     
     def _doActivateInstrument_(self, instrument, activateMethod):
         instrument.registeredDevices = { 'VICON': 'pointer', 
