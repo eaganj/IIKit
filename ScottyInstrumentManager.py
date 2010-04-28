@@ -21,18 +21,19 @@ class ScottyInstrumentManager(InstrumentManager.InstrumentManager):
         appName = u"Scotty"
         searchDirs = [ os.path.join(baseDir, appName, u"Instruments") for baseDir in searchDirs ]
         searchDirs.append(os.path.join(ModuleBundle.builtInPlugInsPath(), u"Instruments"))
-        for searchDir in searchDirs:
-            # print "Searching in searchDir", searchDir
-            if os.path.exists(searchDir):
-                pluginPaths = [ os.path.join(searchDir, f) for f in os.listdir(searchDir) 
-                                                                            if f.endswith(u'.instrument') ]
-                for pluginPath in pluginPaths:
-                    try:
-                        InstrumentLoader.loadInstrumentFromBundlePath(pluginPath)
-                    except Exception, e:
-                        # FIXME: Should probably alert user
-                        pluginName = os.path.basename(pluginPath)
-                        NSLog(u"Could not load plugin: %s: %s: %s" % (pluginName, e.__class__.__name__, e))
+        InstrumentLoader.loadInstrumentsInSearchPaths(searchDirs)
+        # for searchDir in searchDirs:
+        #     # print "Searching in searchDir", searchDir
+        #     if os.path.exists(searchDir):
+        #         pluginPaths = [ os.path.join(searchDir, f) for f in os.listdir(searchDir) 
+        #                                                                     if f.endswith(u'.instrument') ]
+        #         for pluginPath in pluginPaths:
+        #             try:
+        #                 InstrumentLoader.loadInstrumentFromBundlePath(pluginPath)
+        #             except Exception, e:
+        #                 # FIXME: Should probably alert user
+        #                 pluginName = os.path.basename(pluginPath)
+        #                 NSLog(u"Could not load plugin: %s: %s: %s" % (pluginName, e.__class__.__name__, e))
     
     def glassViewForWindow(self, window):
         # FIXME: refactor into InstrumentManager instead of using Scotty

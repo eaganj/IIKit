@@ -1,5 +1,6 @@
 from __future__ import with_statement
 
+import inspect
 import os.path
 
 import jre.debug
@@ -42,7 +43,7 @@ class IStarInstrumentManager(iStar.Object):
     
     def _loadInstrumentPlugins(self):
         pass # OVERRIDE IN SUBCLASSES
-    
+        
     def addInstrument_(self, instrument):
         self._instruments[instrument.instrumentID] = instrument
     
@@ -70,11 +71,18 @@ class IStarInstrumentManager(iStar.Object):
     def activateInstrumentOnce_(self, instrument):
         self._doActivateInstrument_(instrument, instrument.activateOnce)
         
-    def _doActivateInstrument_(self, instrumentClass, activateMethod):
-        instrument = instrumentClass()
-        self._activeInstrument = instrument
-        self._activeInstruments.append(instrument)
-        activateMethod(instrument)
+    def _doActivateInstrument_(self, instrumentOrInstrumentClass, activateMethod):
+        if inspect.isclass(instrumentOrInstrumentClass):
+            instrument = instrumentOrInstrumentClass()
+            self._activeInstrument = instrument
+            self._activeInstruments.append(instrument)
+            activateMethod(instrument)
+        else:
+            instrument = instrumentOrInstrumentClass
+            self._activeInstrument = instrument
+            self._activeInstruments.append(instrument)
+            activateMethod()
+        
         self._glassViewsForInstrument[instrument.instrumentID] = set()
         if instrument.wantsGlassWindow():
             glassViews = self.grabGlassWindowsForInstrument_hijackingInteraction_(instrument,
@@ -96,7 +104,7 @@ class IStarInstrumentManager(iStar.Object):
     @jre.debug.trap_exceptions
     def handleEvent(self, rawEvent, namespace):
         for instrument in reversed(self._activeInstruments):        
-            event, handlerMethodName = self._wrapEvent(rawEvent, namespace)
+            event, handlerMethodName = self.wrapEvent(rawEvent, namespace)
             # print "handleEvent:", event, handlerMethodName
             if instrument.stateMachine:
                 handled = instrument.stateMachine.process_event(event)
@@ -110,7 +118,7 @@ class IStarInstrumentManager(iStar.Object):
         
         return False
     
-    def _wrapEvent(self, event, namespace):
+    def wrapEvent(self, event, namespace):
         return _eventWrappers[namespace](event)
         
     # def mouseDown_(self, event):

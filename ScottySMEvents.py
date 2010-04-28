@@ -2,6 +2,8 @@ from AppKit import *
 from Foundation import *
 import objc
 
+import jre.cocoa # To load NSEvent category additions
+
 from IIKit import *
 from StateMachines import *
 from InstrumentManager import InstrumentManager
@@ -67,6 +69,10 @@ class CocoaEvent(Event):
     def locationInWindow(self):
         return self._cocoa_event.locationInWindow()
     
+    def locationInScreen(self):
+        # This is not actually a part of Cocoa, but is present as a category addition in jre.cocoa.
+        return self._cocoa_event.locationInScreen()
+
     def modifierFlags(self):
         return self._cocoa_event.modifierFlags()
     

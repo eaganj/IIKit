@@ -29,11 +29,58 @@ class ScottyPickerInstrument(Instrument):
         super(ScottyPickerInstrument, self).activate()
         self.reset()
     
-    def objectForMouseEvent(self, event):
-        ''' Return the object to pick under the mouse.  By default this is the deepest widget under
-            the mouse.  Subclasses can override this method to change the object-picking behavior.
+    @classmethod
+    def run(cls):
+        picker = cls()
+        picker.action = lambda picked: setattr(picker, '_picked', picked)
+        InstrumentManager.sharedInstrumentManager().activateInstrumentOnce_(picker)
+        app = NSApp()
+        
+        # Block until picked
+        try:
+            while picker.isActive() and app.isRunning():
+                event = app.nextEventMatchingMask_untilDate_inMode_dequeue_(
+                    NSUIntegerMax,#NSAnyEventMask,
+                    None,
+                    NSDefaultRunLoopMode,
+                    True)
+
+                if event is None:
+                    continue
+
+                # Abort if user presses ^C
+                if (event.type() == NSKeyDown):# and (event.window() == window):
+                    chr = event.charactersIgnoringModifiers()
+                    if chr == 'c' and (event.modifierFlags() & NSControlKeyMask):
+                        raise KeyboardInterrupt
+
+                app.sendEvent_(event)
+        finally:
+            if picker.isActive():
+                picker.deactivate()
+        
+        return picker._picked
+    
+    def objectAtPointInWindow(self, point, window):
+        ''' 
+        Return the object, if any, at `point`. 
+        
+        If `window` is None, `point` is expressed in screen coordinates.  Otherwise, `point` is taken to
+        be in that window's coordinates.
+        
+        Subclasses are exprected to override this method to provide object-picking behavior.
         '''
         return None
+        
+    def objectForMouseEvent(self, event):
+        ''' Return the object to pick under the mouse.  By default this is the deepest widget under
+            the mouse.  
+            
+            Subclasses can override this method to change the object-picking behavior.  By default, this
+            method defers picking to `objectAtPointInWindow()`.  This method should only be overridden
+            if any special event-based handling is needed.
+        '''
+        return self.objectAtPointInWindow(event.locationInWindow(), event.window())
         
     @jre.debug.trap_exceptions
     def mouseMoved(self, event):

@@ -1,5 +1,6 @@
 from __future__ import with_statement
 
+from collections import deque
 import copy
 import imp
 import os
@@ -14,33 +15,85 @@ from Instrument import *
 from StateMachines.translator import *
 import iStar
 
+
 class InstrumentLoader(iStar.Object):
     currentBundle = None
     
     @classmethod
-    @jre.debug.trap_exceptions
+    def loadInstrumentsInSearchPaths(cls, searchDirs):
+        pluginPaths = []
+        for searchDir in searchDirs:
+            print "Searching in searchDir", searchDir
+            if os.path.exists(searchDir):
+                pluginPaths.extend([ os.path.join(searchDir, f) for f in os.listdir(searchDir) 
+                                                                      if f.endswith(u'.instrument') ])
+                        
+        if not pluginPaths:
+            return # Nothing to load
+            
+        pluginBundles = [ Bundle.bundleWithPath_(path) for path in pluginPaths ]
+        pluginBundles = cls.sortPluginBundles(pluginBundles)
+        
+        for pluginBundle in pluginBundles:
+            try:
+                cls.loadInstrumentFromBundle(pluginBundle)
+            except Exception, e:
+                # FIXME: Should probably alert user
+                pluginName = os.path.basename(pluginBundle.bundlePath())
+                NSLog(u"Could not load plugin: %s: %s: %s" % (pluginName, e.__class__.__name__, e))
+    
+    @classmethod
+    def sortPluginBundles(cls, bundles):
+        handles = [ (bundle.bundleIdentifier(), bundle) for bundle in bundles ]
+        bundleWithID = dict(handles)
+        parentsForID = dict([ (bundle.bundleIdentifier(), bundle.infoDictionary().get('iStar Required Plugins', [])) for bundle in bundles ])
+        
+        visited = set()
+        def visit(node, result):
+            if node in visited:
+                return
+                
+            for parent in parentsForID[node]:
+                visit(parent, visited)
+                visited.add(parent)
+                result.append(parent)
+            result.append(node)
+        
+        result = []
+        for bundleID in bundleWithID:
+            visit(bundleID, result)
+        return [ bundleWithID[bundleID] for bundleID in reversed(result) ]
+    
+    @classmethod
     def loadInstrumentFromBundlePath(cls, bundlePath):
-        bundle = Bundle.bundleWithPath_(bundlePath)
+        cls.loadInstrumentFromBundle(Bundle.bundleWithPath_(bundlePath))
+        
+    @classmethod
+    @jre.debug.trap_exceptions
+    def loadInstrumentFromBundle(cls, bundle):
         cls.currentBundle = bundle
         try:
             bundleID = bundle.bundleIdentifier()
             bundleInfo = bundle.infoDictionary()
-            scriptName = 'iStar.' + bundleID
+            scriptName = 'IIKit.plugin.' + bundleID
             scriptPath = bundle.pathForResource_ofType_(bundleInfo['iStarInstrumentScriptName'], None)
             if not scriptPath:
                 raise Exception('Could not find instrument code (%s)' % \
                                             (bundleInfo['iStarInstrumentScriptName']))
             scriptFileName = os.path.basename(scriptPath)
+            moduleName = os.path.splitext(os.path.basename(scriptPath))[0]
+            moduleFullName = '%s.%s' % (scriptName, moduleName)
     
             module = cls._loadScript(scriptName, scriptPath)
             globalEnvItems = set(globals().keys())
             instruments = set()
+            
             for name, value in module.__dict__.iteritems():
                 # if name not in globalEnvItems and hasattr(value, '__module__'):
                 #     print 'Checking', name, 'defined in', value.__module__
         
                 # Check if defined in the loaded module and a valid Instrument class
-                if (getattr(value, '__module__', None) == scriptName 
+                if (getattr(value, '__module__', None) == moduleFullName 
                     or name in getattr(module, '__all__', [])) \
                    and isinstance(value, type) and issubclass(value, Instrument):
                     # instrument matches all required criteria ; all systems are go
@@ -49,11 +102,12 @@ class InstrumentLoader(iStar.Object):
             instrumentManager = InstrumentManager.sharedInstrumentManager()
             for instrumentClass in instruments:
                 instrumentID = u'%s/%s' % (bundleID, instrumentClass.__name__)
-                #print 'Adding instrument', instrumentID
+                # print 'Adding instrument', instrumentID
                 instrumentClass.registerInstrument(instrumentID, bundle)
                 instrumentManager.addInstrument_(instrumentClass)
         finally:
             cls.currentBundle = None
+
 
     @classmethod
     def _loadScript(cls, name, path):
@@ -62,28 +116,42 @@ class InstrumentLoader(iStar.Object):
             path = path[:-2]
             
         with warnings.catch_warnings():
-            warnings.filterwarnings("ignore", "Parent module '.*' not found")
             parentName = name[:name.rfind('.')]
-            parent = imp.new_module(parentName)
+            parentModule = cls._createParentModule(name, path)
+            moduleName = os.path.splitext(os.path.basename(path))[0]
+            moduleFullName = '%s.%s' % (name, moduleName)
             try:
                 oldPath = copy.copy(sys.path)
-                oldModules = copy.copy(sys.modules)
-                sys.modules[parentName] = parent
-                sys.path.append(os.path.dirname(path))
+                sys.path.insert(0, os.path.dirname(path))
                 if os.path.exists(path + 'c') and \
                     (not os.path.exists(path) or os.stat(path + 'c').st_mtime >= os.stat(path).st_mtime):
                     module = imp.load_compiled(name, path + 'c')
                 else:
-                    module = imp.load_source(name, path)
+                    module = imp.load_source(moduleFullName, path)
+
+                module.__bundle__ = cls.currentBundle
                 return module
             finally:
                 sys.path = oldPath
-                sys.modules = oldModules
+            
             # Alternative method: use runpy.run_module
+    
+    @classmethod
+    def _createParentModule(cls, name, path):
+        fullPath = 'IIKit'
+        for part in name.split('.')[1:]:
+            fullPath = '.'.join([fullPath, part])
+            if fullPath not in sys.modules:
+                new_module = imp.new_module(fullPath)
+                new_module.__file__ = "<stub>"
+                new_module.__package__ = []
+                sys.modules[fullPath] = new_module
     
     @classmethod
     def _translatePySM(cls, path):
         PySMTranslator().translate(path, path[:-2])
+    
+        
     
 # Make sure we have a catch_warnings context manager (introduced in Python 2.6)
 try:
@@ -152,7 +220,5 @@ except ImportError:
     
     # warnings is already imported at the top of this module
     warnings.catch_warnings = catch_warnings
-
-
 
 __all__ = 'InstrumentLoader'.split()
