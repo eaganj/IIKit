@@ -54,7 +54,7 @@ class InstrumentLoader(iStar.Object):
                 return
                 
             for parent in parentsForID[node]:
-                visit(parent, visited)
+                visit(parent, result)
                 visited.add(parent)
                 result.append(parent)
             result.append(node)
@@ -62,7 +62,7 @@ class InstrumentLoader(iStar.Object):
         result = []
         for bundleID in bundleWithID:
             visit(bundleID, result)
-        return [ bundleWithID[bundleID] for bundleID in reversed(result) ]
+        return [ bundleWithID[bundleID] for bundleID in result ]
     
     @classmethod
     def loadInstrumentFromBundlePath(cls, bundlePath):
@@ -125,7 +125,7 @@ class InstrumentLoader(iStar.Object):
                 sys.path.insert(0, os.path.dirname(path))
                 if os.path.exists(path + 'c') and \
                     (not os.path.exists(path) or os.stat(path + 'c').st_mtime >= os.stat(path).st_mtime):
-                    module = imp.load_compiled(name, path + 'c')
+                    module = imp.load_compiled(moduleFullName, path + 'c')
                 else:
                     module = imp.load_source(moduleFullName, path)
 
