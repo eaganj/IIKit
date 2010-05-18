@@ -33,14 +33,6 @@ class IStarInstrumentManager(iStar.Object):
         
         return _sharedInstrumentManager
     
-    # @classmethod
-    # def WILDInstrumentManager(cls, iibridge, node):
-    #     # FIXME : refactor this
-    #     # TODO: add a proper WILDInstrumentManager with a sceneGraph attr
-    #     import WILDInstrumentManager
-    #     return WILDInstrumentManager.WILDInstrumentManager(iibridge, node)
-        
-    
     def _loadInstrumentPlugins(self):
         pass # OVERRIDE IN SUBCLASSES
         
@@ -120,22 +112,6 @@ class IStarInstrumentManager(iStar.Object):
     
     def wrapEvent(self, event, namespace):
         return _eventWrappers[namespace](event)
-        
-    # def mouseDown_(self, event):
-    #     if hasattr(self._activeInstrument, 'mouseDown'):
-    #         self._activeInstrument.mouseDown(event)
-    # 
-    # def mouseUp_(self, event):
-    #     if hasattr(self._activeInstrument, 'mouseUp'):
-    #         self._activeInstrument.mouseUp(event)
-    # 
-    # def mouseMoved_(self, event):
-    #     if hasattr(self._activeInstrument, 'mouseMoved'):
-    #         self._activeInstrument.mouseMoved(event)
-    # 
-    # def mouseDragged_(self, event):
-    #     if hasattr(self._activeInstrument, 'mouseDragged'):
-    #         self._activeInstrument.mouseDragged(event)
     
     def glassViewForWindow(self, window):
         pass # OVERRIDE IN SUBCLASSES

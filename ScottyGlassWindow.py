@@ -10,8 +10,9 @@ import jre.debug
 import GlassWindow as GlassWindowModule
 from InstrumentManager import *
 from ScottyController import Scotty
+from ScottyEventFunnel import *
 
-class ScottyGlassWindow(NSWindow, GlassWindowModule.GlassWindow):
+class ScottyGlassWindow(EventFunnel(NSWindow), GlassWindowModule.GlassWindow):
     def __new__(cls, parent):
         return cls.alloc().initWithParent_(parent)
     
@@ -49,6 +50,9 @@ class ScottyGlassWindow(NSWindow, GlassWindowModule.GlassWindow):
         self.setOpaque_(False)
         self.resetEventsMask()
     
+    def canBecomeKeyWindow(self):
+        return self._hijacksMouseInteraction # FIXME: hijacksKeyInteraction ?
+        
     def resetEventsMask(self):
         # NSLeftMouseDown
         # NSLeftMouseUp
@@ -96,21 +100,7 @@ class ScottyGlassWindow(NSWindow, GlassWindowModule.GlassWindow):
         self._hijacksMouseInteraction = hijack
         self.setIgnoresMouseEvents_(not hijack)
         #self.resetEventsMask()
-        
-    def mouseDown_(self, event):
-        #InstrumentManager.sharedInstrumentManager().mouseDown_(event)
-        InstrumentManager.sharedInstrumentManager().handleEvent(event, 'fr.lri.insitu.Scotty')
-    
-    def mouseUp_(self, event):
-        #InstrumentManager.sharedInstrumentManager().mouseUp_(event)
-        InstrumentManager.sharedInstrumentManager().handleEvent(event, 'fr.lri.insitu.Scotty')
-    
-    def mouseDragged_(self, event):
-        InstrumentManager.sharedInstrumentManager().handleEvent(event, 'fr.lri.insitu.Scotty')
-    
-    def mouseMoved_(self, event):
-        super(ScottyGlassWindow, self).mouseMoved_(event)
-        
+                
     def dealloc(self):
         NSNotificationCenter.defaultCenter().removeObserver_(self)
         Scotty().unregisterGlassWindow_(self)

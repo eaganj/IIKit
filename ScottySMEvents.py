@@ -131,6 +131,13 @@ class CocoaEvent(Event):
     
     # TODO:  Other Cocoa Event info (See NSEvent API Ref)
 
+class CocoaActionEvent(CocoaEvent):
+    def __init__(self, *args, **options):
+        if args:
+            super(CocoaActionEvent, self).__init__(args[0][0], sender=args[0][1], **options)
+        else:
+            super(CocoaActionEvent, self).__init__(self._senderMethodName, **options)
+
 class MouseDown(CocoaEvent):
     def __init__(self, *args, **options):
         if args:
@@ -370,9 +377,15 @@ class EventTypeEndGesture(CocoaEvent):
         else:
             super(EventTypeEndGesture, self).__init__(NSEventTypeEndGesture, **options)
 
+# Action method events
+class CancelOperation(CocoaActionEvent):
+    _senderMethodName = 'cancelOperation'
 
 def cocoaEventWrapper(event):
-    etype = event.type()
+    if isinstance(event, tuple):
+        etype = event[0] # Unpack action method name
+    else:
+        etype = event.type()
     if etype in _eventMap:
         handlerName, eventClass = _eventMap[etype]
         return eventClass(event), handlerName
@@ -389,29 +402,32 @@ _eventMap = {
                 NSMouseMoved: ('mouseMoved', MouseMoved),
                 NSLeftMouseDragged: ('mouseDragged', LeftMouseDragged),
                 NSRightMouseDragged: ('rightMouseDragged', RightMouseDragged),
-                # TODO:
-                # NSMouseEntered
-                # NSMouseExited       
-                # NSKeyDown            
-                # NSKeyUp              
-                # NSFlagsChanged       
-                # NSAppKitDefined      
-                # NSSystemDefined      
-                # NSApplicationDefined 
-                # NSPeriodic           
-                # NSCursorUpdate       
-                # NSScrollWheel        
-                # NSTabletPoint        
-                # NSTabletProximity    
-                # NSOtherMouseDown     
-                # NSOtherMouseUp       
-                # NSOtherMouseDragged 
+                NSMouseEntered: ('mouseEntered', MouseEntered),
+                NSMouseExited: ('mouseExited', MouseExited),
+                NSKeyDown: ('keyDown', KeyDown),
+                NSKeyUp: ('keyUp', KeyUp),
+                NSFlagsChanged: ('flagsChanged', FlagsChanged),
+                NSAppKitDefined: ('appKitDefined', AppKitDefined),
+                NSSystemDefined: ('systemDefined', SystemDefined),
+                NSApplicationDefined: ('applicationDefined', ApplicationDefined),
+                NSPeriodic: ('periodic', Periodic),
+                NSCursorUpdate: ('cursorUpdate', CursorUpdate),
+                NSScrollWheel: ('scrollWheel', ScrollWheel),
+                NSTabletPoint: ('tabletPoint', TabletPoint),
+                NSTabletProximity: ('tabletProximity', TabletProximity),
+                NSOtherMouseDown: ('otherMouseDown', OtherMouseDown),
+                NSOtherMouseUp: ('otherMouseUp', OtherMouseUp),
+                NSOtherMouseDragged: ('otherMouseDragged', OtherMouseDragged),
+                # TODO: (Gesture events)
                 # NSEventTypeGesture   
                 # NSEventTypeMagnify   
                 # NSEventTypeSwipe     
                 # NSEventTypeRotate    
                 # NSEventTypeBeginGesture 
                 # NSEventTypeEndGesture
+                
+                # Action methods
+                'cancelOperation': ('cancelOperation', CancelOperation),
             }
 
 __all__ = [ clsName for clsName, cls in locals().items() \
