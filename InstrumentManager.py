@@ -65,7 +65,7 @@ class IStarInstrumentManager(iStar.Object):
         
     def _doActivateInstrument_(self, instrumentOrInstrumentClass, activateMethod):
         if inspect.isclass(instrumentOrInstrumentClass):
-            instrument = instrumentOrInstrumentClass()
+            instrument = self._instantiateInstrument(instrumentOrInstrumentClass)
             self._activeInstrument = instrument
             self._activeInstruments.append(instrument)
             activateMethod(instrument)
@@ -81,6 +81,9 @@ class IStarInstrumentManager(iStar.Object):
                                                                      instrument.shouldHijackInteraction())
             self._glassViewsForInstrument[instrument.instrumentID].update(glassViews)
     
+    def _instantiateInstrument(self, instrumentClass):
+        return instrumentClass()
+        
     def deactivateInstrument_(self, instrument):
         # assert self._activeInstrument == instrument
         self._activeInstrument.deactivate()
@@ -95,9 +98,9 @@ class IStarInstrumentManager(iStar.Object):
         
     @jre.debug.trap_exceptions
     def handleEvent(self, rawEvent, namespace):
-        for instrument in reversed(self._activeInstruments):        
-            event, handlerMethodName = self.wrapEvent(rawEvent, namespace)
-            # print "handleEvent:", event, handlerMethodName
+        event, handlerMethodName = self.wrapEvent(rawEvent, namespace)
+        # print "handleEvent:", event, handlerMethodName
+        for instrument in reversed(self._activeInstruments):
             if instrument.stateMachine:
                 handled = instrument.stateMachine.process_event(event)
                 if handled:
