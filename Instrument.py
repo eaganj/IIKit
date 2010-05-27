@@ -16,6 +16,7 @@ class Instrument(iStar.Object):
     instrumentID = None
     name = None
     verb = None
+    consumesEvents = True
     
     @classmethod
     def registerInstrument(cls, instrumentID, bundle=None):

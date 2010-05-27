@@ -3,6 +3,7 @@ from StateMachines import *
 from InstrumentManager import InstrumentManager
 
 import copy
+import re
 
 class SubstanceEvent(Event):
     def __init__(self, *args, **kw):
@@ -50,12 +51,17 @@ class OSCEvent(SubstanceEvent):
     pass
 
 
+trailing_numbers_re_str = r'\d+$'
+trailing_numbers_re = re.compile(trailing_numbers_re_str)
+
 def substanceOSCEventWrapper(event):
     assert len(event) > 1
     binding, signature = event[0], event[1]
     slash = binding.find('/', 1)
     device = binding[:slash]
     binding = binding[slash+1:]
+    binding = trailing_numbers_re.sub('', binding)
+    # print "OSC device:", device, "binding:", binding, "signature:", signature
     
     if binding == 'button':
         # Special case buttons to distinguish between ButtonPress and ButtonRelease

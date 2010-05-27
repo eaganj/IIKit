@@ -101,9 +101,10 @@ class IStarInstrumentManager(iStar.Object):
         event, handlerMethodName = self.wrapEvent(rawEvent, namespace)
         # print "handleEvent:", event, handlerMethodName
         for instrument in reversed(self._activeInstruments):
+            # print "Delivering event", event, "to", instrument.instrumentID
             if instrument.stateMachine:
                 handled = instrument.stateMachine.process_event(event)
-                if handled:
+                if handled and instrument.consumesEvents:
                     return True
             elif handlerMethodName:
                 handlerMethod = getattr(instrument, handlerMethodName, None)

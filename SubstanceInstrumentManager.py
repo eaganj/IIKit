@@ -62,6 +62,8 @@ class SubstanceInstrumentManager(Facet, IStarInstrumentManager):
         self.instrumentNode.set_dependency(self, "Scene Graph", self._sg, "The Scene Graph")
         
         super(SubstanceInstrumentManager, self).activateInstrument_(instrument)
+        
+        print ">>> Activated instrument", instrument.instrumentID
     
     def _instantiateInstrument(self, instrumentClass):
         instrument = instrumentClass()
