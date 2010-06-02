@@ -69,6 +69,17 @@ class SubstanceInstrumentManager(Facet, IStarInstrumentManager):
         instrument = instrumentClass()
         self.instrumentNode.add_facet(self, instrument, True, True)
         return instrument
+    
+    def _sortedActiveInstruments(self):
+        # FIXME: Improve to properly use a priority queue/stack
+        result = []
+        for instrument in self._activeInstruments:
+            if instrument.priority == 1:
+                result.insert(0, instrument)
+            else:
+                result.append(instrument)
+        
+        return result
         
 
 InstrumentManagerModule.InstrumentManager = SubstanceInstrumentManager

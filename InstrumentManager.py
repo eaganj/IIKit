@@ -57,6 +57,9 @@ class IStarInstrumentManager(iStar.Object):
     def instrumentWithID_(self, instrumentID):
         return self._instruments[instrumentID]
     
+    def _sortedActiveInstruments(self):
+        return reversed(self._activeInstruments)
+        
     def activateInstrument_(self, instrument):
         self._doActivateInstrument_(instrument, instrument.activate)
     
@@ -100,7 +103,8 @@ class IStarInstrumentManager(iStar.Object):
     def handleEvent(self, rawEvent, namespace):
         event, handlerMethodName = self.wrapEvent(rawEvent, namespace)
         # print "handleEvent:", event, handlerMethodName
-        for instrument in reversed(self._activeInstruments):
+        # for instrument in reversed(self._activeInstruments):
+        for instrument in self._sortedActiveInstruments():
             # print "Delivering event", event, "to", instrument.instrumentID
             if instrument.stateMachine:
                 handled = instrument.stateMachine.process_event(event)

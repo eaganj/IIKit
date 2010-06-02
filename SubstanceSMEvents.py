@@ -5,6 +5,8 @@ from InstrumentManager import InstrumentManager
 import copy
 import re
 
+import jre.debug
+
 class SubstanceEvent(Event):
     def __init__(self, *args, **kw):
         '''
@@ -15,6 +17,7 @@ class SubstanceEvent(Event):
         '''
         if args:
             # Wrap an event
+            # print "-> args:", args
             assert len(args) == 3
             rawEvent, device, namespace = args
             self.rawEvent = rawEvent
@@ -66,16 +69,18 @@ def substanceOSCEventWrapper(event):
     if binding == 'button':
         # Special case buttons to distinguish between ButtonPress and ButtonRelease
         assert len(event) > 2
-        payload = event[2]
+        payload = event[2][0] if len(event[2]) > 0 else None
         etype = (binding, payload)
     else:
         etype = (binding, signature)
     
+    # print "Mapping on event type:", etype
     if etype in _eventMap:
         eventClass = _eventMap[etype]
         return eventClass(event, device, 'fr.lri.insitu.wild.substance.osc'), None
     else:
-        return SubstanceEvent(event), None
+        jre.debug.interact()
+        return SubstanceEvent(event, device, 'fr.lri.insitu.wild.substance.osc'), None
 
 
 InstrumentManager.registerEventWrapper(substanceOSCEventWrapper, 'fr.lri.insitu.wild.substance.osc')
@@ -85,8 +90,8 @@ InstrumentManager.registerEventWrapper(substanceOSCEventWrapper, 'fr.lri.insitu.
     
 _eventMap = { 
                ('pointing', 'ff'): Pointing,
-               ('button', '0'): ButtonPress,
-               ('button', '1'): ButtonRelease,
+               ('button', 1): ButtonPress,
+               ('button', 0): ButtonRelease,
             }
 
 __all__ = [ clsName for clsName, cls in locals().items() \
