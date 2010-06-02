@@ -18,10 +18,11 @@ class SubstanceEvent(Event):
         if args:
             # Wrap an event
             # print "-> args:", args
-            assert len(args) == 3
-            rawEvent, device, namespace = args
+            assert len(args) == 4
+            rawEvent, device, binding, namespace = args
             self.rawEvent = rawEvent
             self.device = device
+            self.binding = binding
             self.namespace = namespace
         else:
             self.options = copy.copy(kw)
@@ -37,10 +38,12 @@ class SubstanceEvent(Event):
                         return True
                     else:
                         print "Ignoring bad device:", self.device, "!=", transition.state.state_machine.deviceID
+                        if transition.state.state_machine.deviceID == None:
+                            print "None?!", transition.state.state_machine
                 return False
             # return transition.kwargs['device'] == self.device
-        else:
-            return True
+        
+        return True
 
 
 class Pointing(SubstanceEvent):
@@ -70,31 +73,31 @@ def substanceOSCEventWrapper(event):
     slash = binding.find('/', 1)
     device = binding[1:slash]
     binding = binding[slash+1:]
-    binding = trailing_numbers_re.sub('', binding)
+    bindingType = trailing_numbers_re.sub('', binding)
     # print "OSC device:", device, "binding:", binding, "signature:", signature
     
-    if binding == 'button':
+    if bindingType == 'button':
         # Special case buttons to distinguish between ButtonPress and ButtonRelease
         assert len(event) > 2
         payload = event[2][0] if len(event[2]) > 0 else None
-        etype = (binding, payload)
+        etype = (bindingType, payload)
     else:
-        etype = (binding, signature)
+        etype = (bindingType, signature)
     
     # print "Mapping on event type:", etype
     if etype in _eventMap:
         eventClass = _eventMap[etype]
-        return eventClass(event, device, 'fr.lri.insitu.wild.substance.osc'), None
+        return eventClass(event, device, binding, 'fr.lri.insitu.wild.substance.osc'), None
     else:
         jre.debug.interact()
-        return SubstanceEvent(event, device, 'fr.lri.insitu.wild.substance.osc'), None
+        return SubstanceEvent(event, device, binding, 'fr.lri.insitu.wild.substance.osc'), None
 
 def substanceViconEventWrapper(event):
     assert len(event) == 2
-    device, point = event
+    binding, point = event
     viconEvent = ('/vicon1/%s' % (device), 'ii', point)
     print "Pointing:", viconEvent
-    return Pointing(viconEvent, device, 'fr.lri.insitu.wild.substance.vicon'), None
+    return Pointing(viconEvent, device, binding, 'fr.lri.insitu.wild.substance.vicon'), None
 
 InstrumentManager.registerEventWrapper(substanceOSCEventWrapper, 'fr.lri.insitu.wild.substance.osc')
 InstrumentManager.registerEventWrapper(substanceViconEventWrapper, 'fr.lri.insitu.wild.substance.vicon')
