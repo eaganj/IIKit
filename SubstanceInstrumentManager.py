@@ -28,10 +28,10 @@ class SubstanceInstrumentManager(Facet, IStarInstrumentManager):
         self._sg = local.get_dependency(self, "Scene Graph")
         print "Instrument Manager loaded and installed on", self.__installedNode
         
-        if self._instruments:
-            instrument = self._instruments.get('fr.lri.eaganj.instrument.Mover/MoveInstrument',
-                                               self._instruments.values()[0])
-            local.InstrumentManager.activateInstrument_(self, instrument)
+        # if self._instruments:
+        #     instrument = self._instruments.get('fr.lri.eaganj.instrument.Mover/MoveInstrument',
+        #                                        self._instruments.values()[0])
+        #     local.InstrumentManager.activateInstrument_(self, instrument)
         
         
         # self.vicon = local.get_dependency(self, "VICON")
@@ -61,9 +61,10 @@ class SubstanceInstrumentManager(Facet, IStarInstrumentManager):
         self.instrumentNode = local.new_child(self, instrumentNodeName, instrument.instrumentID)
         self.instrumentNode.set_dependency(self, "Scene Graph", self._sg, "The Scene Graph")
         
-        super(SubstanceInstrumentManager, self).activateInstrument_(instrument)
+        result = super(SubstanceInstrumentManager, self).activateInstrument_(instrument)
         
         print ">>> Activated instrument", instrument.instrumentID
+        return result
     
     def _instantiateInstrument(self, instrumentClass):
         instrument = instrumentClass()

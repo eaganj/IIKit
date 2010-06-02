@@ -31,7 +31,14 @@ class SubstanceEvent(Event):
     def match(self, transition):
         # First check if a device was specified in the transition
         if 'device' in transition.kwargs:
-            return transition.kwargs['device'] == self.device
+            if transition.kwargs['device'] == '<bound>':
+                if hasattr(transition.state.state_machine, "deviceID"):
+                    if transition.state.state_machine.deviceID == self.device:
+                        return True
+                    else:
+                        print "Ignoring bad device:", self.device, "!=", transition.state.state_machine.deviceID
+                return False
+            # return transition.kwargs['device'] == self.device
         else:
             return True
 
@@ -61,7 +68,7 @@ def substanceOSCEventWrapper(event):
     assert len(event) > 1
     binding, signature = event[0], event[1]
     slash = binding.find('/', 1)
-    device = binding[:slash]
+    device = binding[1:slash]
     binding = binding[slash+1:]
     binding = trailing_numbers_re.sub('', binding)
     # print "OSC device:", device, "binding:", binding, "signature:", signature
@@ -82,8 +89,15 @@ def substanceOSCEventWrapper(event):
         jre.debug.interact()
         return SubstanceEvent(event, device, 'fr.lri.insitu.wild.substance.osc'), None
 
+def substanceViconEventWrapper(event):
+    assert len(event) == 2
+    device, point = event
+    viconEvent = ('/vicon1/%s' % (device), 'ii', point)
+    print "Pointing:", viconEvent
+    return Pointing(viconEvent, device, 'fr.lri.insitu.wild.substance.vicon'), None
 
 InstrumentManager.registerEventWrapper(substanceOSCEventWrapper, 'fr.lri.insitu.wild.substance.osc')
+InstrumentManager.registerEventWrapper(substanceViconEventWrapper, 'fr.lri.insitu.wild.substance.vicon')
 
 # TODO:
 # InstrumentManager.registerEventWrapper(substanceEventWrapper, 'fr.lri.insitu.wild.substance')

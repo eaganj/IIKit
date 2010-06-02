@@ -61,10 +61,10 @@ class IStarInstrumentManager(iStar.Object):
         return reversed(self._activeInstruments)
         
     def activateInstrument_(self, instrument):
-        self._doActivateInstrument_(instrument, instrument.activate)
+        return self._doActivateInstrument_(instrument, instrument.activate)
     
     def activateInstrumentOnce_(self, instrument):
-        self._doActivateInstrument_(instrument, instrument.activateOnce)
+        return self._doActivateInstrument_(instrument, instrument.activateOnce)
         
     def _doActivateInstrument_(self, instrumentOrInstrumentClass, activateMethod):
         if inspect.isclass(instrumentOrInstrumentClass):
@@ -83,6 +83,8 @@ class IStarInstrumentManager(iStar.Object):
             glassViews = self.grabGlassWindowsForInstrument_hijackingInteraction_(instrument,
                                                                      instrument.shouldHijackInteraction())
             self._glassViewsForInstrument[instrument.instrumentID].update(glassViews)
+        
+        return instrument
     
     def _instantiateInstrument(self, instrumentClass):
         return instrumentClass()
