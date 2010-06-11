@@ -61,6 +61,9 @@ class CocoaEvent(Event):
                     return False
         
         return True
+        
+    def cocoaEvent(self):
+        return self._cocoa_event
     
     # Cocoa General Event Info (See NSEvent API Ref)
     def context(self):

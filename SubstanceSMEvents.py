@@ -36,10 +36,10 @@ class SubstanceEvent(Event):
                 if hasattr(transition.state.state_machine, "deviceID"):
                     if transition.state.state_machine.deviceID == self.device:
                         return True
-                    else:
-                        print "Ignoring bad device:", self.device, "!=", transition.state.state_machine.deviceID
-                        if transition.state.state_machine.deviceID == None:
-                            print "None?!", transition.state.state_machine
+                    # else:
+                    #     print "Ignoring bad device:", self.device, "!=", transition.state.state_machine.deviceID
+                    #     if transition.state.state_machine.deviceID == None:
+                    #         print "None?!", transition.state.state_machine
                 return False
             # return transition.kwargs['device'] == self.device
         
