@@ -31,17 +31,21 @@ class SubstanceEvent(Event):
         
     def match(self, transition):
         # First check if a device was specified in the transition
-        if 'device' in transition.kwargs:
-            if transition.kwargs['device'] == '<bound>':
+        logical_device = transition.kwargs.get('device', None)
+        if logical_device:
+            if logical_device == '<bound>':
+                # Legacy support
                 if hasattr(transition.state.state_machine, "deviceID"):
                     if transition.state.state_machine.deviceID == self.device:
                         return True
-                    # else:
-                    #     print "Ignoring bad device:", self.device, "!=", transition.state.state_machine.deviceID
-                    #     if transition.state.state_machine.deviceID == None:
-                    #         print "None?!", transition.state.state_machine
                 return False
-            # return transition.kwargs['device'] == self.device
+            
+            instrument = transition.state.state_machine.instrument
+            assert instrument is not None
+            
+            # print "Checking device:", instrument.bindings.get(logical_device, None), "?=?", self.device
+            return instrument.bindings.get(logical_device, None) == self.device
+            
         
         return True
 
@@ -71,7 +75,8 @@ def substanceOSCEventWrapper(event):
     assert len(event) > 1
     binding, signature = event[0], event[1]
     slash = binding.find('/', 1)
-    device = binding[1:slash]
+    #device = binding[1:slash]
+    device = binding
     binding = binding[slash+1:]
     bindingType = trailing_numbers_re.sub('', binding)
     # print "OSC device:", device, "binding:", binding, "signature:", signature

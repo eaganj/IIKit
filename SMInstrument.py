@@ -8,7 +8,17 @@ class SMInstrument(Instrument, statemachine):
         #statemachine.__init__(self)
          
         self.stateMachine = self
-         
+    
+    def setStateMachine(self, machine):
+        self._stateMachine = machine
+        if machine:
+            machine.instrument = self
+    
+    def getStateMachine(self):
+        return self._stateMachine
+        
+    stateMachine = property(getStateMachine, setStateMachine)
+    
 
 #class InstrumentStateMachine(statemachine):
 #    def __init__(self, instrument):

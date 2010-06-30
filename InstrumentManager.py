@@ -54,6 +54,9 @@ class IStarInstrumentManager(iStar.Object):
     def instruments(self):
         return self._instruments.values()
     
+    def sortedInstruments(self):
+        return sorted(self._instruments.values())
+    
     def instrumentWithID_(self, instrumentID):
         return self._instruments[instrumentID]
     

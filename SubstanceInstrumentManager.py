@@ -55,22 +55,42 @@ class SubstanceInstrumentManager(Facet, IStarInstrumentManager):
         return super(SubstanceInstrumentManager, self).handleEvent(rawEvent, namespace)
         
     @Facet.HANDLER("<void::void>")
-    def activateInstrument_(self, instrument):
+    @jre.debug.trap_exceptions
+    def activateInstrument(self, instrumentOrInstrumentClass, context):
         self.__instrumentCounter += 1
         instrumentNodeName = "Instrument %s" % (self.__instrumentCounter)
-        self.instrumentNode = local.new_child(self, instrumentNodeName, instrument.instrumentID)
+        self.instrumentNode = local.new_child(self, instrumentNodeName, 
+                                              instrumentOrInstrumentClass.instrumentID)
         self.instrumentNode.set_dependency(self, "Scene Graph", self._sg, "The Scene Graph")
         
-        result = super(SubstanceInstrumentManager, self).activateInstrument_(instrument)
+        instrument = super(SubstanceInstrumentManager, self).activateInstrument_(
+                                                                    instrumentOrInstrumentClass)
+        self._prepareInstrumentContext(instrument, context)
         
-        print ">>> Activated instrument", instrument.instrumentID
-        return result
+        # print ">>> Activated instrument", instrument.instrumentID
+        return instrument
+    
+    def _prepareInstrumentContext(self, instrument, context):
+        for logical_device in instrument.getDevices():
+            physical_device, label = context.bindLogicalDeviceToInstrument(logical_device, instrument)
+            # print "---    ", logical_device, "->", physical_device, "(%s)" % (label)
     
     def _instantiateInstrument(self, instrumentClass):
         instrument = instrumentClass()
         self.instrumentNode.add_facet(self, instrument, True, True)
         return instrument
     
+    def sortedInstruments(self):
+        # FIXME: Improve to properly use a priority queue/stack
+        result = []
+        for instrument in self._instruments.values():
+            if instrument.priority == 1:
+                result.insert(0, instrument)
+            else:
+                result.append(instrument)
+        
+        return result
+        
     def _sortedActiveInstruments(self):
         # FIXME: Improve to properly use a priority queue/stack
         result = []

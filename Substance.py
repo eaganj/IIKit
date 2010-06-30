@@ -13,6 +13,7 @@ def extendIIKit(module):
 import SubstanceInstrument; extendIIKit(SubstanceInstrument)
 import SubstanceInstrumentManager; extendIIKit(SubstanceInstrumentManager)
 import SubstanceSMEvents; extendIIKit(SubstanceSMEvents)
+import InstrumentContext; extendIIKit(InstrumentContext)
 
 from IIKit import * # To support "from IIKit.wild import *"
 
