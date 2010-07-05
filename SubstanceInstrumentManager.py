@@ -7,6 +7,8 @@ import sys
 import jre.debug
 
 from substance.core.bootstrap import *
+from substance.std.tools.oobridge import OOAccessor
+
 
 class SubstanceInstrumentManager(Facet, IStarInstrumentManager):
     """The Substance Instrument Manager"""
