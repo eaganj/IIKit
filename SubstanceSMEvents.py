@@ -43,7 +43,7 @@ class SubstanceEvent(Event):
             instrument = transition.state.state_machine.instrument
             assert instrument is not None
             
-            print "Checking device: (%s)" % (self.device), instrument.bindings.get(self.device, None), "?=?", logical_device
+            # print "Checking device: (%s)" % (self.device), instrument.bindings.get(self.device, None), "?=?", logical_device
             return instrument.bindings.get(self.device, None) == logical_device
             
         
@@ -104,7 +104,7 @@ def substanceViconEventWrapper(event):
     slash = binding.find('/', 1)
     binding = binding = binding[slash+1:]
     viconEvent = (device, 'ii', point)
-    print "Pointing:", viconEvent
+    # print "Vicon device:", device, "binding:", binding
     return Pointing(viconEvent, device, binding, 'fr.lri.insitu.wild.substance.vicon'), None
 
 InstrumentManager.registerEventWrapper(substanceOSCEventWrapper, 'fr.lri.insitu.wild.substance.osc')
