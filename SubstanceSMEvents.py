@@ -43,8 +43,8 @@ class SubstanceEvent(Event):
             instrument = transition.state.state_machine.instrument
             assert instrument is not None
             
-            # print "Checking device:", instrument.bindings.get(logical_device, None), "?=?", self.device
-            return instrument.bindings.get(logical_device, None) == self.device
+            # print "Checking device:", instrument.bindings.get(self.device, None), "?=?", logical_device
+            return instrument.bindings.get(self.device, None) == logical_device
             
         
         return True

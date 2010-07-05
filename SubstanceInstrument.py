@@ -5,7 +5,8 @@ class SubstanceInstrumentMixin(object):
     def __init__(self):
         self._context = None
         self.bindings = {}
-    
+        self.ooaccessor = None
+        
     def getContext(self):
         return self._context
     
@@ -23,7 +24,7 @@ class SubstanceInstrumentMixin(object):
         return result
     
     def bindLogicalDeviceToActualDevice(self, logicalDevice, actualDevice):
-        self.bindings[logicalDevice] = actualDevice
+        self.bindings[actualDevice] = logicalDevice
         
 class SubstanceInstrument(Facet, Instrument, SubstanceInstrumentMixin):
     @Facet.DEPENDENCY("Scene Graph", "The Scene Graph of the WILD Universe")

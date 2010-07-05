@@ -26,6 +26,12 @@ class SubstanceInstrumentManager(Facet, IStarInstrumentManager):
         assert self.__installedNode is None, "SubstanceInstrumentManager has already been instantiated"
         self.__installedNode = self.node
         self._sg = local.get_dependency(self, "Scene Graph")
+        
+        
+        assert not self._sg.has_facet(self, "OOAccessor")
+        self._ooaccessor = OOAccessor()
+        self._sg.add_facet(self, ooaccessor, True, True)
+        
         print "Instrument Manager loaded and installed on", self.__installedNode
         
         # if self._instruments:
@@ -66,6 +72,7 @@ class SubstanceInstrumentManager(Facet, IStarInstrumentManager):
         instrument = super(SubstanceInstrumentManager, self).activateInstrument_(
                                                                     instrumentOrInstrumentClass)
         self._prepareInstrumentContext(instrument, context)
+        instrument.ooaccessor = self._ooaccessor
         
         # print ">>> Activated instrument", instrument.instrumentID
         return instrument
