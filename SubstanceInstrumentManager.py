@@ -32,7 +32,7 @@ class SubstanceInstrumentManager(Facet, IStarInstrumentManager):
         
         assert not self._sg.has_facet(self, "OOAccessor")
         self._ooaccessor = OOAccessor()
-        self._sg.add_facet(self, ooaccessor, True, True)
+        self._sg.add_facet(self, self._ooaccessor, True, True)
         
         print "Instrument Manager loaded and installed on", self.__installedNode
         
