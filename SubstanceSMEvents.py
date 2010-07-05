@@ -100,8 +100,10 @@ def substanceOSCEventWrapper(event):
 def substanceViconEventWrapper(event):
     assert len(event) == 2
     binding, point = event
-    device = "viconblue" # FIXME ?!?!@
-    viconEvent = ('/%s/%s' % (device, binding), 'ii', point)
+    device = binding
+    slash = binding.find('/', 1)
+    binding = binding = binding[slash+1:]
+    viconEvent = (device, 'ii', point)
     print "Pointing:", viconEvent
     return Pointing(viconEvent, device, binding, 'fr.lri.insitu.wild.substance.vicon'), None
 
