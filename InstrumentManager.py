@@ -64,22 +64,34 @@ class IStarInstrumentManager(iStar.Object):
         return reversed(self._activeInstruments)
         
     def activateInstrument_(self, instrument):
-        return self._doActivateInstrument_(instrument, instrument.activate)
+        return self.activateInstrument_withContext_once_(instrument, None, False)
+        # return self._doActivateInstrument_(instrument, instrument.activate)
     
     def activateInstrumentOnce_(self, instrument):
-        return self._doActivateInstrument_(instrument, instrument.activateOnce)
+        return self.activateInstrument_withContext_once_(instrument, None, True)
+        # return self._doActivateInstrument_(instrument, instrument.activateOnce)
+    
+    def activateInstrument_withContext_once_(self, instrument, context, once):
+        activateMethod = instrument.activateOnce if once else instrument.activate
+        return self._doActivateInstrument_withContext_(instrument, context, activateMethod)
         
     def _doActivateInstrument_(self, instrumentOrInstrumentClass, activateMethod):
+        return self._doActivateInstrument_withContext_(instrumentOrInstrumentClass, 
+                                                       context, activateMethod)
+
+    def _doActivateInstrument_withContext_(self, instrumentOrInstrumentClass, context, activateMethod):
         if inspect.isclass(instrumentOrInstrumentClass):
             instrument = self._instantiateInstrument(instrumentOrInstrumentClass)
             self._activeInstrument = instrument
             self._activeInstruments.append(instrument)
-            activateMethod(instrument)
+            instrument.instrumentManager = self
+            activateMethod(instrument, context)
         else:
             instrument = instrumentOrInstrumentClass
             self._activeInstrument = instrument
             self._activeInstruments.append(instrument)
-            activateMethod()
+            instrument.instrumentManager = self
+            activateMethod(context)
         
         self._glassViewsForInstrument[instrument.instrumentID] = set()
         if instrument.wantsGlassWindow():
@@ -97,6 +109,7 @@ class IStarInstrumentManager(iStar.Object):
         self._activeInstrument.deactivate()
         self._activeInstrument = None
         self._activeInstruments.remove(instrument)
+        instrument.instrumentManager = None
         self.ungrabGlassWindowsForInstrument_(instrument)
         
     @classmethod
@@ -133,6 +146,9 @@ class IStarInstrumentManager(iStar.Object):
         return [] # OVERRIDE IN SUBCLASSES
 
     def ungrabGlassWindowsForInstrument_(self, instrument):
+        pass # OVERRIDE IN SUBCLASSES
+    
+    def grabFullScreenGlassWindowForInstrument_(self, instrument):
         pass # OVERRIDE IN SUBCLASSES
     
     def resetGlassViewsForInstrument_(self, instrument):

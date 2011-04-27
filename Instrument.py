@@ -27,7 +27,7 @@ class Instrument(iStar.Object):
             cls._bundleID = bundle.bundleIdentifier()
     
     def __init__(self):
-        super(Instrument, self).__init__()        
+        super(Instrument, self).__init__()
         self._active = False
         self._activatedOnce = False
         
@@ -43,16 +43,18 @@ class Instrument(iStar.Object):
         return self._active
     active = property(isActive)
         
-    def activate(self):
+    def activate(self, context=None):
         self._active = True
+        self._context = context
     
-    def activateOnce(self):
+    def activateOnce(self, context=None):
         self._activatedOnce = True
-        self.activate()
+        self.activate(context)
     
     def deactivate(self):
         if self._active or self._activatedOnce:
             self._active = self._activatedOnce = False
+            self._context = None
             InstrumentManager.sharedInstrumentManager().deactivateInstrument_(self)
     
     def performActionOn(self, obj):

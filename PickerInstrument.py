@@ -25,8 +25,8 @@ class ScottyPickerInstrument(Instrument):
         #self._widget = None
         self._object = None
     
-    def activate(self):
-        super(ScottyPickerInstrument, self).activate()
+    def activate(self, context=None):
+        super(ScottyPickerInstrument, self).activate(context)
         self.reset()
     
     @classmethod

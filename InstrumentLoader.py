@@ -17,6 +17,8 @@ import iStar
 
 
 class InstrumentLoader(iStar.Object):
+    ''' The Instrument Loader is responsible for deserializing instrument plugins stored on disk.
+    '''
     currentBundle = None
     
     @classmethod

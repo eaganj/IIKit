@@ -13,12 +13,49 @@ from ScottyController import Scotty
 from ScottyEventFunnel import *
 
 class ScottyGlassWindow(EventFunnel(NSWindow), GlassWindowModule.GlassWindow):
-    def __new__(cls, parent):
-        return cls.alloc().initWithParent_(parent)
+    def __new__(cls, parent=None):
+        if parent:
+            return cls.alloc().initWithParent_(parent)
+        else:
+            return cls.alloc().initFullScreen()
     
     def initWithParent_(self, parent):
+        if isinstance(parent, NSWindow):
+            parentFrame = parent.frame()
+        else:
+            # Convert widget frame to screen coords
+            parentOrigin = parent.window().convertBaseToScreen_(
+                                                    parent.convertRectToBase_(parent.frame()).origin)
+            parentFrame = NSMakeRect(parentOrigin.x, parentOrigin.y, *parent.frame().size)
+        
+        self = self.initWithFrame_(parentFrame)
+        if not self:
+            return self
+        
+        if isinstance(parent, NSWindow):
+            NSNotificationCenter.defaultCenter().addObserver_selector_name_object_(
+                                                                           self,
+                                                                           self.parentDidResize_,
+                                                                           NSWindowDidResizeNotification,
+                                                                           parent)
+            # parent.addChildWindow_ordered_(self, NSWindowAbove)
+        else:
+            NSNotificationCenter.defaultCenter().addObserver_selector_name_object_(
+                                                                        self,
+                                                                        self.parentDidResize_,
+                                                                        NSViewFrameDidChangeNotification,
+                                                                        parent)
+            # parent.window().addChildWindow_ordered_(self, NSWindowAbove)
+        return self
+    
+    def initFullScreen(self):
+        screenFrame = NSScreen.mainScreen().frame() # FIXME: Need to account for multiple screens!
+        return self.initWithFrame_(screenFrame)
+    
+    def initWithFrame_(self, frame):
+        print "Init glass window using frame:", frame
         self = super(ScottyGlassWindow, self).initWithContentRect_styleMask_backing_defer_(
-                                                parent.frame(),
+                                                frame,
                                                 NSBorderlessWindowMask,
                                                 NSBackingStoreBuffered,
                                                 False
@@ -26,18 +63,11 @@ class ScottyGlassWindow(EventFunnel(NSWindow), GlassWindowModule.GlassWindow):
         if not self:
             return self
         
-        GlassWindowModule.GlassWindow.__init__(self, parent)
+        GlassWindowModule.GlassWindow.__init__(self, None)
             
         self._hijacksMouseInteraction = False
         self.reset()
-        NSNotificationCenter.defaultCenter().addObserver_selector_name_object_(
-                                                                           self,
-                                                                           self.parentDidResize_,
-                                                                           NSWindowDidResizeNotification,
-                                                                           parent,
-                                                                              )
-        
-        parent.addChildWindow_ordered_(self, NSWindowAbove)
+            
         Scotty().registerGlassWindow_(self)
         
         # FIXME : refactor somewhere else
@@ -71,6 +101,7 @@ class ScottyGlassWindow(EventFunnel(NSWindow), GlassWindowModule.GlassWindow):
         self.setAcceptsMouseMovedEvents_(True)
         
     def parentDidResize_(self, notification):
+        print "Glasswindow parent did resize:", notification.object(), notification.object().frame()
         self.setFrame_display_(self.calcMyFrameFromParentFrame_(notification.object().frame()), True)
     
     def calcMyFrameFromParentFrame_(self, parentFrame):
