@@ -9,6 +9,7 @@ def extendIIKit(module):
 
 # Load Scotty versions
 import ScottyInstrumentManager; extendIIKit(ScottyInstrumentManager)
+import ScottyInstrumentContext; extendIIKit(ScottyInstrumentContext)
 import ScottyGlassWindow; extendIIKit(ScottyGlassWindow)
 import ScottyPickerInstrument; extendIIKit(ScottyPickerInstrument)
 import ScottySMEvents; extendIIKit(ScottySMEvents)

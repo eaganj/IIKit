@@ -3,7 +3,7 @@ import re
 strip_numbers_exp_str = r'\d+'
 strip_numbers_exp = re.compile(strip_numbers_exp_str)
 
-class InstrumentContext(object):
+class IStarInstrumentContext(object):
     ''' InstrumentContexts are used to provide information about the environment in which an Instrument is
         being used.  They are currently only used in the Substance environment to create a binding between
         physical devices and instruments (such as binding a motion-tracked wand to a pointing instrument or
@@ -27,6 +27,7 @@ class InstrumentContext(object):
         self.devices = []
         self.boundDevices = set()
         self.deviceLabels = {} # Device labels, keyed by actual device
+        self.glassWindows = {}
 
     def unboundDeviceFor(self, device_binding):
         ''' Request an unbound physical device for the specified `device_binding` request.  
@@ -72,5 +73,11 @@ class InstrumentContext(object):
     def __str__(self):
         return '<%sInstrumentContext: %s>' % ('unbound ' if not self.cursor else '',
                                               self.cursor if self.cursor else '0x%s' % (id(self)))
+    
+    def attachGlassWindowToActivationSource(self, interactive=True):
+        print "attachGlassWindowToActivationSource (stub)"
+        pass
+
+InstrumentContext = IStarInstrumentContext
 
 __all__ = 'InstrumentContext'.split()

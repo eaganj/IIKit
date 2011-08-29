@@ -38,7 +38,7 @@ class ScottyGlassWindow(EventFunnel(NSWindow), GlassWindowModule.GlassWindow):
                                                                            self.parentDidResize_,
                                                                            NSWindowDidResizeNotification,
                                                                            parent)
-            # parent.addChildWindow_ordered_(self, NSWindowAbove)
+            parent.addChildWindow_ordered_(self, NSWindowAbove)
         else:
             NSNotificationCenter.defaultCenter().addObserver_selector_name_object_(
                                                                         self,
@@ -75,6 +75,18 @@ class ScottyGlassWindow(EventFunnel(NSWindow), GlassWindowModule.GlassWindow):
         
         return self
     
+    @classmethod
+    def attachToActivationSource_(cls, context):
+        if context.activationSource:
+            parentWindow = context.activationSource.window()
+            if not parentWindow:
+                return None
+            glassWindow = cls.alloc().initWithParent_(parentWindow)
+            context.glassWindows.add(glassWindow)
+            return glassWindow
+        else:
+            return None
+            
     def reset(self):
         self.setBackgroundColor_(NSColor.clearColor())
         self.setOpaque_(False)

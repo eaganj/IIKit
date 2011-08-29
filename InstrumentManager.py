@@ -18,7 +18,7 @@ class IStarInstrumentManager(iStar.Object):
         self._devices = []
         # self._activeInstrument = None
         self._activeInstruments = []
-        self._glassViewsForInstrument = {}
+        # self._glassViewsForInstrument = {}
     
     def init(self):
         self._loadInstrumentPlugins()
@@ -85,19 +85,21 @@ class IStarInstrumentManager(iStar.Object):
             self._activeInstrument = instrument
             self._activeInstruments.append(instrument)
             instrument.instrumentManager = self
+            instrument.context = context
             activateMethod(instrument, context)
         else:
             instrument = instrumentOrInstrumentClass
             self._activeInstrument = instrument
             self._activeInstruments.append(instrument)
             instrument.instrumentManager = self
+            instrument.context = context
             activateMethod(context)
         
-        self._glassViewsForInstrument[instrument.instrumentID] = set()
-        if instrument.wantsGlassWindow():
-            glassViews = self.grabGlassWindowsForInstrument_hijackingInteraction_(instrument,
-                                                                     instrument.shouldHijackInteraction())
-            self._glassViewsForInstrument[instrument.instrumentID].update(glassViews)
+        # self._glassViewsForInstrument[instrument.instrumentID] = set()
+        # if instrument.wantsGlassWindow():
+        #     glassViews = self.grabGlassWindowsForInstrument_hijackingInteraction_(instrument,
+        #                                                              instrument.shouldHijackInteraction())
+        #     self._glassViewsForInstrument[instrument.instrumentID].update(glassViews)
         
         return instrument
     
@@ -152,9 +154,10 @@ class IStarInstrumentManager(iStar.Object):
         pass # OVERRIDE IN SUBCLASSES
     
     def resetGlassViewsForInstrument_(self, instrument):
-        for glassView in self._glassViewsForInstrument[instrument.instrumentID]:
-            if hasattr(glassView, 'reset'):
-                glassView.reset()
+        pass
+        # for glassView in self._glassViewsForInstrument[instrument.instrumentID]:
+        #     if hasattr(glassView, 'reset'):
+        #         glassView.reset()
     
 
 InstrumentManager = IStarInstrumentManager
