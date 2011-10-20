@@ -85,7 +85,8 @@ class IStarInstrumentManager(iStar.Object):
             self._activeInstrument = instrument
             self._activeInstruments.append(instrument)
             instrument.instrumentManager = self
-            instrument.context = context
+            if context is not None:
+                instrument.context = context
             activateMethod(instrument, context)
         else:
             instrument = instrumentOrInstrumentClass
