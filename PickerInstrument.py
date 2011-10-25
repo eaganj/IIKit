@@ -120,7 +120,8 @@ class ScottyPickerInstrument(Instrument):
         if hasattr(obj, 'window') and hasattr(obj, 'frame'):
             #self.glassViewForWindow(obj.window()).addHighlightBoxForObject_(obj)
             glassView = InstrumentManager.sharedInstrumentManager().glassViewForWindow(obj.window())
-            glassView.addHighlightBoxForObject_(obj)
+            if glassView:
+                glassView.addHighlightBoxForObject_(obj)
         else:
             print 'Cannot highlight object:', obj
         
