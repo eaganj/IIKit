@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # IIKit -- the Instrumental Interaction Toolkit
 # Copyright 2009-2011, Université Paris-Sud
 # by James R. Eagan (code at my last name dot me)
@@ -26,7 +28,7 @@ import InstrumentContext
 from ScottyController import Scotty
 from ScottyGlassWindow import GlassWindow
 
-class ScottyInstrumentContext(InstrumentContext.IStarInstrumentContext):
+class ScottyInstrumentContext(InstrumentContext.IIKitInstrumentContext):
     def attachGlassWindowToActivationSource(self, interactive=True):
         if self.activationSource:
             parentWindow = self.activationSource.window()

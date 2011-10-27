@@ -18,20 +18,25 @@
 # and GNU Lesser General Public License along with this program.  
 # If not, see <http://www.gnu.org/licenses/>.
 
-# TODO : refactor out of IIKit and into WILD
+from Object import *
 
-import IIKit
+import copy
 
-def extendIIKit(module):
-    for attr in module.__all__:
-        # print "adding", attr, "to IIKit"
-        setattr(IIKit, attr, getattr(module, attr))
+class Tag(Object):
+    def __init__(self):
+        super(Tag, self).__init__()
 
-# Load WILD implementations
-import WILDInstrumentManager; extendIIKit(WILDInstrumentManager)
-import WILDSMEvents; extendIIKit(WILDSMEvents)
+        self.tagged = set()
+    
+    def tag(self, obj):
+        self.tagged.add(obj)
+    
+    def untag(self, obj):
+        self.tagged.remove(obj)
+    
+    def clear(self):
+        toRemove = copy.copy(self.tagged)
+        for obj in toRemove:
+            obj.untag(self)
 
-from IIKit import * # To support "from IIKit.wild import *"
-
-del extendIIKit
-del IIKit
+__all__ = 'Tag'.split()

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # IIKit -- the Instrumental Interaction Toolkit
 # Copyright 2009-2011, Université Paris-Sud
 # by James R. Eagan (code at my last name dot me)
@@ -23,14 +25,14 @@ import os.path
 
 import jre.debug
 
-import iStar
+import Object
 
 _sharedInstrumentManager = None
 _eventWrappers = { }
 
-class IStarInstrumentManager(iStar.Object):
+class IIKitInstrumentManager(Object.Object):
     def __init__(self):
-        super(IStarInstrumentManager, self).__init__()
+        super(IIKitInstrumentManager, self).__init__()
         
         self._instruments = {}
         self._devices = []
@@ -179,6 +181,6 @@ class IStarInstrumentManager(iStar.Object):
         #         glassView.reset()
     
 
-InstrumentManager = IStarInstrumentManager
+InstrumentManager = IIKitInstrumentManager
 
 __all__ = 'InstrumentManager'.split()

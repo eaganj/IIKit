@@ -18,20 +18,13 @@
 # and GNU Lesser General Public License along with this program.  
 # If not, see <http://www.gnu.org/licenses/>.
 
-# TODO : refactor out of IIKit and into WILD
+from Object import *
 
-import IIKit
+class SelectionInfo(Object):
+    def __init__(self, color=None):
+        super(SelectionInfo, self).__init__()
+        
+        # FIXME: if color is None: color = yellow
+        self.color = color
 
-def extendIIKit(module):
-    for attr in module.__all__:
-        # print "adding", attr, "to IIKit"
-        setattr(IIKit, attr, getattr(module, attr))
-
-# Load WILD implementations
-import WILDInstrumentManager; extendIIKit(WILDInstrumentManager)
-import WILDSMEvents; extendIIKit(WILDSMEvents)
-
-from IIKit import * # To support "from IIKit.wild import *"
-
-del extendIIKit
-del IIKit
+__all__ = ('SelectionInfo',)

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # IIKit -- the Instrumental Interaction Toolkit
 # Copyright 2009-2011, Université Paris-Sud
 # by James R. Eagan (code at my last name dot me)

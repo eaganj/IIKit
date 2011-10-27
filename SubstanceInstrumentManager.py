@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # IIKit -- the Instrumental Interaction Toolkit
 # Copyright 2009-2011, Université Paris-Sud
 # by James R. Eagan (code at my last name dot me)
@@ -17,7 +19,7 @@
 # If not, see <http://www.gnu.org/licenses/>.
 
 import InstrumentManager as InstrumentManagerModule
-from InstrumentManager import IStarInstrumentManager
+from InstrumentManager import IIKitInstrumentManager
 
 import os
 import sys
@@ -28,7 +30,7 @@ from substance.core.bootstrap import *
 from substance.std.tools.oobridge import OOAccessor
 
 
-class SubstanceInstrumentManager(Facet, IStarInstrumentManager):
+class SubstanceInstrumentManager(Facet, IIKitInstrumentManager):
     """The Substance Instrument Manager"""
     
     # @Facet.DEPENDENCY("VICON", "The place where the VICON 2D Input representation is stored and updated")
@@ -37,7 +39,7 @@ class SubstanceInstrumentManager(Facet, IStarInstrumentManager):
     def __init__(self):
         # super(SubstanceInstrumentManager, self).__init__("InstrumentManager")
         Facet.__init__(self, "InstrumentManager")
-        IStarInstrumentManager.__init__(self)
+        IIKitInstrumentManager.__init__(self)
         
         self.__installedNode = None
         self.__instrumentCounter = 0

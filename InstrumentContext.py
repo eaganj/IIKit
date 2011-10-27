@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # IIKit -- the Instrumental Interaction Toolkit
 # Copyright 2009-2011, Université Paris-Sud
 # by James R. Eagan (code at my last name dot me)
@@ -21,7 +23,7 @@ import re
 strip_numbers_exp_str = r'\d+'
 strip_numbers_exp = re.compile(strip_numbers_exp_str)
 
-class IStarInstrumentContext(object):
+class IIKitInstrumentContext(object):
     ''' InstrumentContexts are used to provide information about the environment in which an Instrument is
         being used.  They are currently only used in the Substance environment to create a binding between
         physical devices and instruments (such as binding a motion-tracked wand to a pointing instrument or
@@ -96,6 +98,6 @@ class IStarInstrumentContext(object):
         print "attachGlassWindowToActivationSource (stub)"
         pass
 
-InstrumentContext = IStarInstrumentContext
+InstrumentContext = IIKitInstrumentContext
 
 __all__ = 'InstrumentContext'.split()

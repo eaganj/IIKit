@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # IIKit -- the Instrumental Interaction Toolkit
 # Copyright 2009-2011, Université Paris-Sud
 # by James R. Eagan (code at my last name dot me)
@@ -37,7 +39,13 @@ Scotty integrates with Cocoa applications on Mac OS X, allowing the integration 
 IIKit Substance support integrates with the Shared Substance Canvas environment to provide instrumental interaction in a distributed environment.  It can be imported via `from IIKit.Substance import *`.  Refer to the Substance Canvas Master demos for examples of its use.
 '''
 
-from iStar import Action, Protocol
+from Object import *
+from tag import *
+from selectionManager import *
+from selectionTag import *
+from selectionInfo import *
+from action import *
+from protocol import *
 from Governor import *
 from Instrument import *
 from SMInstrument import *

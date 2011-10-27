@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # IIKit -- the Instrumental Interaction Toolkit
 # Copyright 2009-2011, Université Paris-Sud
 # by James R. Eagan (code at my last name dot me)
@@ -23,10 +25,10 @@ import jre.debug
 from collections import deque
 
 from InstrumentManager import *
-import iStar
+import Object
 
 # TODO:  Make GlassWindow itself an instrument
-class IStarGlassWindow(iStar.Object):
+class IIKitGlassWindow(Object.Object):
     ''' A glass window is a transparent overlay that can be attached to an existing object, such as a widget,
         window, or the full screen.  It acts as a child of this object, following it as its position updates.
         Glass windows are useful for drawing annotations on top of an existing widget or even replacing its 
@@ -39,7 +41,7 @@ class IStarGlassWindow(iStar.Object):
         ''' Create a new glass window attached to `parent`.  If no parent is provided, then a fulllscreen
             glass window is created instead.
         '''
-        super(IStarGlassWindow, self).__init__()
+        super(IIKitGlassWindow, self).__init__()
         pass # OVERRIDE IN SUBCLASSES
         
         self._hijacksMouseInteraction = False
@@ -53,6 +55,6 @@ class IStarGlassWindow(iStar.Object):
     def reset(self):
         pass # OVERRIDE IN SUBCLASSES
         
-GlassWindow = IStarGlassWindow
+GlassWindow = IIKitGlassWindow
         
 __all__ = 'GlassWindow'.split()

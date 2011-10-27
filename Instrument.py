@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # IIKit -- the Instrumental Interaction Toolkit
 # Copyright 2009-2011, Université Paris-Sud
 # by James R. Eagan (code at my last name dot me)
@@ -26,9 +28,9 @@ import jre.debug
 
 from InstrumentManager import *
 
-import iStar
+import Object
 
-class Instrument(iStar.Object):
+class Instrument(Object.Object):
     _bundleID = None
     _bundle_ = None
     instrumentID = None

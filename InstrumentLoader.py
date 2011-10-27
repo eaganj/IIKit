@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # IIKit -- the Instrumental Interaction Toolkit
 # Copyright 2009-2011, Université Paris-Sud
 # by James R. Eagan (code at my last name dot me)
@@ -31,10 +33,10 @@ from jre.util.bundle import Bundle
 from InstrumentManager import *
 from Instrument import *
 from StateMachines.translator import *
-import iStar
+import Object
 
 
-class InstrumentLoader(iStar.Object):
+class InstrumentLoader(Object.Object):
     ''' The Instrument Loader is responsible for deserializing instrument plugins stored on disk.
     '''
     currentBundle = None
@@ -66,7 +68,7 @@ class InstrumentLoader(iStar.Object):
     def sortPluginBundles(cls, bundles):
         handles = [ (bundle.bundleIdentifier(), bundle) for bundle in bundles ]
         bundleWithID = dict(handles)
-        parentsForID = dict([ (bundle.bundleIdentifier(), bundle.infoDictionary().get('iStar Required Plugins', [])) for bundle in bundles ])
+        parentsForID = dict([ (bundle.bundleIdentifier(), bundle.infoDictionary().get('IIKit Required Plugins', [])) for bundle in bundles ])
         
         visited = set()
         def visit(node, result):
@@ -96,10 +98,10 @@ class InstrumentLoader(iStar.Object):
             bundleID = bundle.bundleIdentifier()
             bundleInfo = bundle.infoDictionary()
             scriptName = 'IIKit.plugin.' + bundleID
-            scriptPath = bundle.pathForResource_ofType_(bundleInfo['iStarInstrumentScriptName'], None)
+            scriptPath = bundle.paththForResource_ofType_(bundleInfo['IIKitInstrumentScriptName'], None)
             if not scriptPath:
                 raise Exception('Could not find instrument code (%s)' % \
-                                            (bundleInfo['iStarInstrumentScriptName']))
+                                            (bundleInfo['IIKitInstrumentScriptName']))
             scriptFileName = os.path.basename(scriptPath)
             moduleName = os.path.splitext(os.path.basename(scriptPath))[0]
             moduleFullName = '%s.%s' % (scriptName, moduleName)
