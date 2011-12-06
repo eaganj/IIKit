@@ -98,7 +98,7 @@ class InstrumentLoader(Object.Object):
             bundleID = bundle.bundleIdentifier()
             bundleInfo = bundle.infoDictionary()
             scriptName = 'IIKit.plugin.' + bundleID
-            scriptPath = bundle.paththForResource_ofType_(bundleInfo['IIKitInstrumentScriptName'], None)
+            scriptPath = bundle.pathForResource_ofType_(bundleInfo['IIKitInstrumentScriptName'], None)
             if not scriptPath:
                 raise Exception('Could not find instrument code (%s)' % \
                                             (bundleInfo['IIKitInstrumentScriptName']))
