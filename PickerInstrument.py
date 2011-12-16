@@ -20,6 +20,8 @@
 
 from __future__ import with_statement
 
+print "import PickerInstrument"
+
 from Foundation import *
 from AppKit import *
 import objc
@@ -29,6 +31,7 @@ import jre.debug
 
 from Instrument import *
 from InstrumentManager import *
+# from IIKit import InstrumentContext
 
 class ScottyPickerInstrument(Instrument):
     name = u"Object picker"
@@ -51,9 +54,13 @@ class ScottyPickerInstrument(Instrument):
     
     @classmethod
     def run(cls):
+        from IIKit import InstrumentContext
         picker = cls()
         picker.action = lambda picked: setattr(picker, '_picked', picked)
-        InstrumentManager.sharedInstrumentManager().activateInstrumentOnce_(picker)
+        context = InstrumentContext()
+        InstrumentManager.sharedInstrumentManager().activateInstrument_withContext_once_(picker, 
+                                                                                         context, 
+                                                                                         True)
         app = NSApp()
         
         # Block until picked
@@ -137,9 +144,11 @@ class ScottyPickerInstrument(Instrument):
     
     def highlightObject(self, obj):
         # FIXME: Need to add object protocol support!
-        if hasattr(obj, 'window') and hasattr(obj, 'frame'):
+        if self.context and hasattr(obj, 'window') and hasattr(obj, 'frame'):
             #self.glassViewForWindow(obj.window()).addHighlightBoxForObject_(obj)
-            glassView = InstrumentManager.sharedInstrumentManager().glassViewForWindow(obj.window())
+            # glassView = InstrumentManager.sharedInstrumentManager().glassViewForWindow(obj.window())
+            glassWindow = self.context.glassWindows.get(obj.window(), None)
+            glassView = glassWindow.contentView() if glassWindow else None
             if glassView:
                 glassView.addHighlightBoxForObject_(obj)
         else:

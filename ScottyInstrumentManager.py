@@ -27,6 +27,7 @@ import objc
 import os.path
 
 import jre.cocoa
+import jre.debug
 
 import InstrumentManager
 from ScottyController import Scotty
@@ -65,6 +66,7 @@ class ScottyInstrumentManager(InstrumentManager.InstrumentManager):
             return None
     
     def grabFullScreenGlassWindowForInstrument_(self, instrument):
+        jre.debug.DEPRECATED()
         glassWindow = GlassWindow()
         Scotty().registerGlassWindow_(glassWindow)
         # glassWindow.setBackgroundColor_(NSColor.colorWithCalibratedRed_green_blue_alpha_(1.0, 0.0, 0.0, 0.05))
@@ -73,9 +75,11 @@ class ScottyInstrumentManager(InstrumentManager.InstrumentManager):
         return glassWindow
         
     def grabGlassWindowsForInstrument_hijackingInteraction_(self, instrument, hijack):
+        jre.debug.DEPRECATED()
         return Scotty().grabGlassWindowsForInstrument_hijackingInteraction_(instrument, hijack)
 
     def ungrabGlassWindowsForInstrument_(self, instrument):
+        jre.debug.DEPRECATED()
         Scotty().ungrabGlassWindowsForInstrument_(instrument)
 
 InstrumentManager.InstrumentManager = ScottyInstrumentManager # Override InstrumentManager with Scotty version

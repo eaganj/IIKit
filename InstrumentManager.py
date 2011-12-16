@@ -97,7 +97,7 @@ class IIKitInstrumentManager(Object.Object):
         
     def _doActivateInstrument_(self, instrumentOrInstrumentClass, activateMethod):
         return self._doActivateInstrument_withContext_(instrumentOrInstrumentClass, 
-                                                       context, activateMethod)
+                                                       None, activateMethod)
 
     def _doActivateInstrument_withContext_(self, instrumentOrInstrumentClass, context, activateMethod):
         if inspect.isclass(instrumentOrInstrumentClass):
@@ -129,11 +129,16 @@ class IIKitInstrumentManager(Object.Object):
         
     def deactivateInstrument_(self, instrument):
         # assert self._activeInstrument == instrument
-        self._activeInstrument.deactivate()
-        self._activeInstrument = None
-        self._activeInstruments.remove(instrument)
+        instrument.deactivate()
         instrument.instrumentManager = None
-        self.ungrabGlassWindowsForInstrument_(instrument)
+        
+        if instrument == self._activeInstrument:
+            self._activeInstrument = self._activeInstruments[-1] if self._activeInstruments else None
+        self._activeInstruments.remove(instrument)
+        
+        # self.ungrabGlassWindowsForInstrument_(instrument)
+        if instrument.context:
+            instrument.context.instrumentWasDeactivated(instrument)
         
     @classmethod
     def registerEventWrapper(cls, wrapper, namespace):

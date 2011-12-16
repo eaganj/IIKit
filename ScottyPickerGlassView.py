@@ -43,7 +43,9 @@ class ScottyPickerGlassView(NSView):
         
     def addHighlightBoxForObject_(self, widget):
         # FIXME: Add Protocol support
-        rect = widget.convertRectToBase_(widget.convertRect_fromView_(widget.frame(), widget.superview()))
+        rect = widget.window().contentView().convertRect_fromView_(widget.frame(), widget.superview())
+        # rect = widget.convertRectToWindow_(widget.frame())
+        # rect = widget.convertRectToBase_(widget.convertRect_fromView_(widget.bounds(), widget.superview()))
         self._rect = rect
         self.setNeedsDisplay_(True)
         

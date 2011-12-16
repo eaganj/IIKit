@@ -73,7 +73,7 @@ class ScottyGlassWindow(EventFunnel(NSWindow), GlassWindowModule.GlassWindow):
         return self.initWithFrame_(screenFrame)
     
     def initWithFrame_(self, frame):
-        print "Init glass window using frame:", frame
+        # print "Init glass window using frame:", frame
         self = super(ScottyGlassWindow, self).initWithContentRect_styleMask_backing_defer_(
                                                 frame,
                                                 NSBorderlessWindowMask,

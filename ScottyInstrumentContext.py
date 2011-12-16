@@ -20,6 +20,8 @@
 
 from __future__ import with_statement
 
+print "import ScottyInstrumentContext"
+
 from AppKit import *
 from Foundation import *
 import objc
@@ -40,6 +42,7 @@ class ScottyInstrumentContext(InstrumentContext.IIKitInstrumentContext):
             return None
     
     def attachGlassWindowToAllWindows(self, interactive=True):
+        # FIXME : Add support for background windows, too.
         glassWindows = [ self.attachGlassWindowToWindow(window, interactive) for window in NSApp().windows()
                             if not isinstance(window, (GlassWindow,)) ]
         return glassWindows
@@ -64,11 +67,23 @@ class ScottyInstrumentContext(InstrumentContext.IIKitInstrumentContext):
         
         return glassWindow
     
+    def attachGlassWindowToWidget(self, parentWidget, interactive=True):
+        raise Exception(u"Not implemented")
+    
     def glassViewForWindow(self, parentWindow):
         glassWindow = self.glassWindows.get(parentWindow, None)
         if glassWindow:
             return glassWindow.contentView()
         return None
+    
+    def instrumentWasDeactivated(self, instrument):
+        for parentWindow, glassWindow in self.glassWindows.items():
+            # print "clobber", glassWindow, "of", parentWindow
+            glassWindow.orderOut_(None)
+        
+        # FIXME : For some reason, this causes an NSAutoreleasePool double drain warning.  Is this a bug
+        # here or in PyObjC? -JRE 10.7.2 stock
+        # self.glassWindows.clear() # This should be uncommented to avoid a potential mem leak, right? -JRE
 
 InstrumentContext.InstrumentContext = ScottyInstrumentContext
 InstrumentContext = ScottyInstrumentContext

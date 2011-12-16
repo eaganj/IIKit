@@ -20,6 +20,7 @@
 
 from __future__ import with_statement
 
+print "import ScottyPickerInstrument"
 from Foundation import *
 from AppKit import *
 import objc
@@ -36,8 +37,15 @@ class ScottyPickerInstrument(PickerInstrument.PickerInstrument):
         self.highlightFillColor = NSColor.colorWithCalibratedRed_green_blue_alpha_(1.0, 0.0, 0.0, 0.125)
         self.highlightBorderColor = NSColor.colorWithCalibratedRed_green_blue_alpha_(1.0, 0.0, 0.0, 0.25)
     
-    def newGlassViewForGlassWindow(self, window):
-        return ScottyPickerGlassView(window.frame(), self)
+    def activate(self, context=None):
+        super(ScottyPickerInstrument, self).activate(context)
+        glassWindows = context.attachGlassWindowToAllWindows(interactive=True)
+        for glassWindow in glassWindows:
+            parentWindow = glassWindow.parentWindow()
+            glassWindow.setContentView_(ScottyPickerGlassView(parentWindow.frame(), self))
+        
+    # def newGlassViewForGlassWindow(self, window):
+    #     return ScottyPickerGlassView(window.frame(), self)
 
 PickerInstrument.PickerInstrument = ScottyPickerInstrument
 PickerInstrument = ScottyPickerInstrument

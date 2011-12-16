@@ -18,6 +18,8 @@
 # and GNU Lesser General Public License along with this program.  
 # If not, see <http://www.gnu.org/licenses/>.
 
+print "import InstrumentContext"
+
 import re
 
 strip_numbers_exp_str = r'\d+'
@@ -96,6 +98,9 @@ class IIKitInstrumentContext(object):
     
     def attachGlassWindowToActivationSource(self, interactive=True):
         print "attachGlassWindowToActivationSource (stub)"
+        pass
+    
+    def instrumentWasDeactivated(self, instrument):
         pass
 
 InstrumentContext = IIKitInstrumentContext
